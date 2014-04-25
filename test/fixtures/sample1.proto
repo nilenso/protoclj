@@ -1,0 +1,8 @@
+package protoclj_sample;    /* -*- mode: protobuf -*- */
+
+option java_package = "protoclj.sample.protos";
+
+message KeyValuePair {
+  required string key     = 1;
+  required string value   = 2;
+}
