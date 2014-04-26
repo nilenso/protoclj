@@ -88,10 +88,11 @@
   Pass in nil to bindings-map to circumvent nested translation"
   (let [fn ^java.lang.reflect.Method (:reader attribute)
         return-type ^Class (:type attribute)
-        base (list (symbol (str "." (.getName fn))) this)]
-    (if-let [mapper (get bindings-map return-type)]
-      (list mapper base)
-      base)))
+        sexp `(~(symbol (str "." (.getName fn))) ~this)
+        sexp (if-let [mapper (get bindings-map return-type)]
+               `(~mapper ~sexp)
+               sexp)]
+    sexp))
 
 ;; Magic
 
