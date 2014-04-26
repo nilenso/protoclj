@@ -66,7 +66,7 @@
      :writer (.getMethod ^Class builder-clazz setter-name (into-array Class [Iterable]))
      :type type
      :apply-mapping (fn [sexp mapper]
-                      `(doall (map ~mapper ~sexp)))}))
+                      `(vec (map ~mapper ~sexp)))}))
 
 (defn- proto-attributes [clazz-sym]
   (let [clazz ^Class (eval clazz-sym)

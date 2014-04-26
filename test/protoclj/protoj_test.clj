@@ -10,8 +10,7 @@
 (defprotos sample1
   key-value-pair  Sample1$KeyValuePair
   nested-object   Sample1$NestedObject
-  repeated-object Sample1$RepeatedObject
-  )
+  repeated-object Sample1$RepeatedObject)
 
 (deftest very-simple-protobufs
   (testing "can be read from"
@@ -63,17 +62,17 @@
   (testing "can be read from"
     (let [proto-object (-> (Sample1$RepeatedObject/newBuilder)
                            (.addMessages "foo")
-                           ;; (.addKvps (-> (Sample1$KeyValuePair/newBuilder)
-                           ;;               (.setKey "foo")
-                           ;;               (.setValue "bar")
-                           ;;               .build))
+                           (.addKvps (-> (Sample1$KeyValuePair/newBuilder)
+                                         (.setKey "foo")
+                                         (.setValue "bar")
+                                         .build))
                            .build)
           proto (repeated-object proto-object)]
       (is (= ["foo"] (proto-get proto :messages)))
-      ;; (is (= ["foo"] (-> proto (proto-get :kvps) first (proto-get :foo))))
+      (is (= "foo" (-> proto (proto-get :kvps) first (proto-get :key))))
 
       (testing "can be turned into a map"
-        (is (= {:messages ["foo"] :kvps []} (->map sample1 proto))))))
+        (is (= ["foo"] (:messages (->map sample1 proto)))))))
 
   (testing "it can be parsed from a map"
     (let [proto (repeated-object {:messages ["foo" "bar"]})]
