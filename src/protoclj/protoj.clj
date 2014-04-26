@@ -63,6 +63,19 @@
 
 ;; Magic
 
+(defn- build-reader [this fns bindings-map]
+  `(reify ProtobufMap
+     (proto-get [_# k#]
+       (case k#
+         ~@(mapcat #(list (keywordize-fn %) (fetch-from-proto this bindings-map %)) fns)
+         nil))
+     (proto-get-raw [_# k#]
+       (case k#
+         ~@(mapcat #(list (keywordize-fn %) (fetch-from-proto this nil %)) fns)
+         nil))
+     (proto-keys [_#] ~(vec (map keywordize-fn fns)))
+     (proto-obj [_#] ~this)))
+
 (defn- define-proto [[clazz fn-name] bindings-map]
   "Returns a sexp for defining the proto"
   (let [this (vary-meta (gensym "this") assoc :tag clazz)
@@ -84,18 +97,7 @@
          (~fn-name [input-stream#] (~fn-name (. ~clazz parseFrom input-stream#)))
 
          ~clazz
-         (~fn-name [~this]
-           (reify ProtobufMap
-             (proto-get [_# k#]
-               (case k#
-                 ~@(mapcat #(list (keywordize-fn %) (fetch-from-proto this bindings-map %)) fns)
-                 nil))
-             (proto-get-raw [_# k#]
-               (case k#
-                 ~@(mapcat #(list (keywordize-fn %) (fetch-from-proto this nil %)) fns)
-                 nil))
-             (proto-keys [_#] ~(vec (map keywordize-fn fns)))
-             (proto-obj [_#] ~this)))))))
+         (~fn-name [~this] ~(build-reader this fns bindings-map))))))
 
 (defmacro defprotos [bindings-name & bindings-seq]
   "Public macro. See tests for usage"
