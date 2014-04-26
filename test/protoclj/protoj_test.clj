@@ -75,8 +75,9 @@
         (is (= {:messages ["foo"] :kvps [{:key "foo" :value "bar"}]} (->map sample1 proto))))))
 
   (testing "it can be parsed from a map"
-    (let [proto (repeated-object {:messages ["foo" "bar"]})]
-      (is (= ["foo" "bar"] (proto-get proto :messages))))))
+    (let [proto (repeated-object {:messages ["foo" "bar"] :kvps [{:key "foo" :value "bar"}]})]
+      (is (= ["foo" "bar"] (proto-get proto :messages)))
+      (is (= "foo" (-> proto (proto-get :kvps) first (proto-get :key)))))))
 
 (deftest coersing-to-a-protobuf
   (let [proto-object (-> (Sample1$KeyValuePair/newBuilder)

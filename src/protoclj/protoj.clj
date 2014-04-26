@@ -53,7 +53,9 @@
                        (into-array Class [type]))
    :type type
    :apply-mapping (fn [sexp mapper]
-                    `(~mapper ~sexp))})
+                    `(~mapper ~sexp))
+   :reverse-mapping (fn [sexp mapper]
+                      `(proto-obj (~mapper ~sexp)))})
 
 (defn- repeated-attribute [kw read-interface builder-clazz single-setter-name type]
   (let [reader-name (-> single-setter-name
@@ -66,7 +68,9 @@
      :writer (.getMethod ^Class builder-clazz setter-name (into-array Class [Iterable]))
      :type type
      :apply-mapping (fn [sexp mapper]
-                      `(vec (map ~mapper ~sexp)))}))
+                      `(vec (map ~mapper ~sexp)))
+     :reverse-mapping (fn [sexp mapper]
+                        `(map (comp proto-obj ~mapper) ~sexp))}))
 
 (defn- proto-attributes [clazz-sym]
   (let [clazz ^Class (eval clazz-sym)
@@ -130,14 +134,14 @@
     `(let [~builder (. ~clazz ~'newBuilder)]
        ~@(for [attribute attributes
                :let [fn ^java.lang.reflect.Method (:writer attribute)
-                     [^Class type] (.getParameterTypes fn)
+                     type ^Class (:type attribute)
                      fn-symbol (symbol (str "." (.getName fn)))
-                     kw (:keyword attribute)
-                     body (if-let [mapper (get binding-map type)]
-                            `(proto-obj (~mapper (~kw ~map)))
-                            (list kw map))
+                     sexp `(~(:keyword attribute) ~map)
+                     sexp (if-let [mapper (get binding-map type)]
+                            ((:reverse-mapping attribute) sexp mapper)
+                            sexp)
                      type-sym (vary-meta (gensym "val") assoc :tag (-> type .getName symbol))]]
-           `(when-let [~type-sym ~body]
+           `(when-let [~type-sym ~sexp]
               (~fn-symbol ~builder ~type-sym)))
        (.build ~builder))))
 
