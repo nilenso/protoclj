@@ -17,9 +17,10 @@
 
 ;; Reflection and Fetching
 
-(defn- get-relevant-methods [^Class clazz]
+(defn- get-reader-methods [clazz-sym]
   "Returns a list of all protobuf related functions for a class"
-  (let [interface (->> clazz
+  (let [clazz (eval clazz-sym)
+        interface (->> ^Class clazz
                        .getInterfaces
                        (filter #(.startsWith (.getName ^Class %) (.getName clazz)))
                        first)
@@ -76,13 +77,16 @@
      (proto-keys [_#] ~(vec (map keywordize-fn fns)))
      (proto-obj [_#] ~this)))
 
+(defn- build-from-map [map]
+  nil)
+
 (defn- define-proto [[clazz fn-name] bindings-map]
   "Returns a sexp for defining the proto"
   (let [this (vary-meta (gensym "this") assoc :tag clazz)
-        fns (-> clazz eval get-relevant-methods)
         protocol-name (-> clazz eval protocol-name)
         byte-array-type (-> 0 byte-array class .getName symbol)
-        byte-array-symbol (vary-meta (gensym "stream") assoc :tag byte-array-type)]
+        byte-array-symbol (vary-meta (gensym "stream") assoc :tag byte-array-type)
+        map-sym (gensym "map")]
     `(do
        (defprotocol ~protocol-name
          (~fn-name [~this]))
@@ -96,8 +100,11 @@
          java.io.InputStream
          (~fn-name [input-stream#] (~fn-name (. ~clazz parseFrom input-stream#)))
 
+         clojure.lang.IPersistentMap
+         (~fn-name [~map-sym] (~fn-name ~(build-from-map map-sym)))
+
          ~clazz
-         (~fn-name [~this] ~(build-reader this fns bindings-map))))))
+         (~fn-name [~this] ~(build-reader this (get-reader-methods clazz) bindings-map))))))
 
 (defmacro defprotos [bindings-name & bindings-seq]
   "Public macro. See tests for usage"

@@ -22,7 +22,12 @@
       (is (= proto-object (proto-obj kvp)))
 
       (testing "can be turned into a map"
-        (is (= {:key "foo" :value "bar"} (->map sample1 kvp)))))))
+        (is (= {:key "foo" :value "bar"} (->map sample1 kvp))))))
+
+  (testing "can be parsed from a map"
+    (let [kvp (key-value-pair {:key "foo" :value "bar"})]
+      (is (= "foo" (proto-get kvp :key)))
+      (is (= "bar" (proto-get kvp :value))))))
 
 (deftest a-protobuf-containing-another
   (testing "can be read from"
