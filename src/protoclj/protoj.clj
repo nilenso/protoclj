@@ -15,44 +15,6 @@
   (proto-keys [m] nil)
   (proto-obj [m] nil))
 
-;; Reflection and Fetching
-
-(defn- get-reader-methods [clazz-sym]
-  "Returns a list of all protobuf related functions for a class"
-  (let [^Class clazz (eval clazz-sym)
-        interface (->> clazz
-                       .getInterfaces
-                       (filter #(.startsWith (.getName ^Class %) (.getName clazz)))
-                       first)
-        functions (reduce (fn [m ^java.lang.reflect.Method method]
-                            (assoc m (.getName method) method))
-                          nil (.getMethods ^Class interface))]
-    (->> functions
-         keys
-         (filter #(.startsWith ^String % "has"))
-         (map #(clojure.string/replace % #"^has" "get"))
-         (remove #{"getField"})
-         (map functions))))
-
-(defn- get-writer-methods [clazz-sym]
-  "Returns a list of methods on the builder"
-  (let [^Class clazz (eval clazz-sym)
-        readers (get-reader-methods clazz-sym)
-        builder-clazz (-> clazz (.getMethod "newBuilder" nil) .getReturnType)]
-    (for [reader readers
-          :let [setter-name (-> reader .getName (clojure.string/replace #"^get" "set"))
-                type (.getReturnType reader)]]
-      (.getMethod builder-clazz setter-name (into-array Class [type])))))
-
-(defn- fetch-from-proto [this bindings-map ^java.lang.reflect.Method fn]
-  "Returns a sexp that can fetch the key from the protobuf.
-  Pass in nil to bindings-map to circumvent nested translation"
-  (let [return-type (.getReturnType fn)
-        base (list (symbol (str "." (.getName fn))) this)]
-    (if-let [mapper (get bindings-map return-type)]
-      (list mapper base)
-      base)))
-
 ;; String Munging
 
 (defn- keywordize-fn [^java.lang.reflect.Method fn]
@@ -73,21 +35,50 @@
       (clojure.string/replace #"[^a-zA-Z1-9]" "-")
       gensym))
 
+;; Reflection and Fetching
+
+(defn- proto-attributes [clazz-sym]
+  (let [^Class clazz (eval clazz-sym)
+        ^Class read-interface
+        (->> clazz
+             .getInterfaces
+             (filter #(.startsWith (.getName ^Class %) (.getName clazz)))
+             first)
+        ^Class builder-clazz (-> clazz (.getMethod "newBuilder" nil) .getReturnType)]
+    (for [function (.getDeclaredMethods read-interface)
+          :when (.startsWith (.getName function) "has")
+          :let [reader-fn (.getMethod read-interface (clojure.string/replace (.getName function) #"^has" "get") nil)
+                val-type (.getReturnType reader-fn)
+                writer-fn (.getMethod builder-clazz (clojure.string/replace (.getName function) #"^has" "set") (into-array Class [val-type]))]]
+      {:keyword (keywordize-fn reader-fn)
+       :reader reader-fn
+       :writer writer-fn})))
+
+(defn- fetch-from-proto [this bindings-map attribute]
+  "Returns a sexp that can fetch the key from the protobuf.
+  Pass in nil to bindings-map to circumvent nested translation"
+  (let [^java.lang.reflect.Method fn (:reader attribute)
+        return-type (.getReturnType fn)
+        base (list (symbol (str "." (.getName fn))) this)]
+    (if-let [mapper (get bindings-map return-type)]
+      (list mapper base)
+      base)))
+
 ;; Magic
 
-(defn- build-reader [this fns bindings-map]
+(defn- build-reader [this attributes bindings-map]
   "The main reify that can get different params"
   `(reify
      ProtobufMap
      (proto-get [_# k#]
        (case k#
-         ~@(mapcat #(list (keywordize-fn %) (fetch-from-proto this bindings-map %)) fns)
+         ~@(mapcat #(list (:keyword %) (fetch-from-proto this bindings-map %)) attributes)
          nil))
      (proto-get-raw [_# k#]
        (case k#
-         ~@(mapcat #(list (keywordize-fn %) (fetch-from-proto this nil %)) fns)
+         ~@(mapcat #(list (:keyword %) (fetch-from-proto this nil %)) attributes)
          nil))
-     (proto-keys [_#] ~(vec (map keywordize-fn fns)))
+     (proto-keys [_#] ~(vec (map :keyword attributes)))
      (proto-obj [_#] ~this)
 
      clojure.java.io.IOFactory
@@ -100,14 +91,15 @@
      (make-writer [x# opts#]
        (clojure.java.io/make-writer (clojure.java.io/make-output-stream x# opts#) opts#))))
 
-(defn- build-from-map [map clazz binding-map]
+(defn- build-from-map [map clazz attributes binding-map]
   "Generate the reify from a map"
   (let [builder (gensym "builder")]
     `(let [~builder (. ~clazz ~'newBuilder)]
-       ~@(for [^java.lang.reflect.Method fn (get-writer-methods clazz)
-               :let [[^Class type] (.getParameterTypes fn)
+       ~@(for [attribute attributes
+               :let [fn ^java.lang.reflect.Method (:writer attribute)
+                     [^Class type] (.getParameterTypes fn)
                      fn-symbol (symbol (str "." (.getName fn)))
-                     kw (keywordize-fn fn)
+                     kw (:keyword attribute)
                      body (if-let [mapper (get binding-map type)]
                             `(proto-obj (~mapper (~kw ~map)))
                             (list kw map))
@@ -119,6 +111,7 @@
 (defn- build-proto-definition [[clazz fn-name] bindings-map]
   "Returns a sexp for defining the proto"
   (let [this (vary-meta (gensym "this") assoc :tag clazz)
+        attributes (proto-attributes clazz)
         protocol-name (-> clazz eval protocol-name)
         byte-array-type (-> 0 byte-array class .getName symbol)
         byte-array-symbol (vary-meta (gensym "stream") assoc :tag byte-array-type)
@@ -137,10 +130,10 @@
          (~fn-name [input-stream#] (~fn-name (. ~clazz ~'parseFrom input-stream#)))
 
          ~clazz
-         (~fn-name [~this] ~(build-reader this (get-reader-methods clazz) bindings-map))
+         (~fn-name [~this] ~(build-reader this attributes bindings-map))
 
          clojure.lang.IPersistentMap
-         (~fn-name [~map-sym] (~fn-name ~(build-from-map map-sym clazz bindings-map)))))))
+         (~fn-name [~map-sym] (~fn-name ~(build-from-map map-sym clazz attributes bindings-map)))))))
 
 (defmacro defprotos [bindings-name & bindings-seq]
   "Public macro. See tests for usage"
