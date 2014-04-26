@@ -19,8 +19,8 @@
 
 (defn- get-reader-methods [clazz-sym]
   "Returns a list of all protobuf related functions for a class"
-  (let [clazz (eval clazz-sym)
-        interface (->> ^Class clazz
+  (let [^Class clazz (eval clazz-sym)
+        interface (->> clazz
                        .getInterfaces
                        (filter #(.startsWith (.getName ^Class %) (.getName clazz)))
                        first)
@@ -33,6 +33,17 @@
          (map #(clojure.string/replace % #"^has" "get"))
          (remove #{"getField"})
          (map functions))))
+
+(defn- get-writer-methods [clazz-sym]
+  "Returns a list of methods on the builder"
+  (let [^Class clazz (eval clazz-sym)
+        readers (get-reader-methods clazz-sym)
+        builder-clazz (-> clazz (.getMethod "newBuilder" nil) .getReturnType)]
+    (map #(let [reader ^java.lang.reflect.Method %
+                setter-name (-> reader .getName (clojure.string/replace #"^get" "set"))
+                type (.getReturnType reader)]
+            (.getMethod builder-clazz setter-name (into-array Class [type])))
+         readers)))
 
 (defn- fetch-from-proto [this bindings-map ^java.lang.reflect.Method fn]
   "Returns a sexp that can fetch the key from the protobuf.
@@ -53,7 +64,7 @@
                (str "-" (clojure.string/lower-case %))
                %))
        (apply str)
-       (#(clojure.string/replace % #"^get-" ""))
+       (#(clojure.string/replace % #"^get-|^set-" ""))
        keyword))
 
 (defn- protocol-name [^Class class]
@@ -77,8 +88,15 @@
      (proto-keys [_#] ~(vec (map keywordize-fn fns)))
      (proto-obj [_#] ~this)))
 
-(defn- build-from-map [map]
-  nil)
+(defn- build-from-map [map clazz fns]
+  `(-> (. ~clazz newBuilder)
+       ~@(for [^java.lang.reflect.Method fn fns
+               :let [[^Class type] (.getParameterTypes fn)
+                     fn-symbol (symbol (str "." (.getName fn)))
+                     kw (keywordize-fn fn)
+                     type-sym (vary-meta (gensym "val") assoc :tag type)]]
+           `(~fn-symbol (let [~type-sym (~kw ~map)] ~type-sym)))
+       (.build)))
 
 (defn- define-proto [[clazz fn-name] bindings-map]
   "Returns a sexp for defining the proto"
@@ -101,7 +119,7 @@
          (~fn-name [input-stream#] (~fn-name (. ~clazz parseFrom input-stream#)))
 
          clojure.lang.IPersistentMap
-         (~fn-name [~map-sym] (~fn-name ~(build-from-map map-sym)))
+         (~fn-name [~map-sym] (~fn-name ~(build-from-map map-sym clazz (get-writer-methods clazz))))
 
          ~clazz
          (~fn-name [~this] ~(build-reader this (get-reader-methods clazz) bindings-map))))))
