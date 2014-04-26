@@ -51,4 +51,11 @@
             kvp (key-value-pair byte-array)]
 
         (is (= "foo" (proto-get kvp :key)))
+        (is (= "bar" (proto-get kvp :value)))))
+
+    (testing "it reads from an input stream"
+      (let [input-stream (-> proto-object .toByteArray clojure.java.io/input-stream)
+            kvp (key-value-pair input-stream)
+            ]
+        (is (= "foo" (proto-get kvp :key)))
         (is (= "bar" (proto-get kvp :value)))))))

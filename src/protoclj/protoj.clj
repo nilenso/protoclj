@@ -73,6 +73,9 @@
          ~byte-array-type
          (~fn-name [~byte-array-symbol] (~fn-name (. ~clazz parseFrom ~byte-array-symbol)))
 
+         java.io.InputStream
+         (~fn-name [input-stream#] (~fn-name (. ~clazz parseFrom input-stream#)))
+
          ~clazz
          (~fn-name [~this]
            (reify ProtobufMap
