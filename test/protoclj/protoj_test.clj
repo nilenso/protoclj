@@ -6,13 +6,17 @@
 (defprotos sample1
   key-value-pair Sample1$KeyValuePair)
 
-(deftest simple-key-can-be-read-and-written
+(deftest very-simple-protobufs
 
-  (testing "it can read key and value"
+  (testing "can be read from"
     (let [proto-object (-> (Sample1$KeyValuePair/newBuilder)
                            (.setKey "foo")
                            (.setValue "bar")
                            .build)
           kvp (key-value-pair proto-object)]
       (is (= "foo" (proto-get kvp :key)))
-      (is (= "bar" (proto-get kvp :value))))))
+      (is (= "bar" (proto-get kvp :value)))
+      (is (= proto-object (proto-obj kvp)))
+
+      (testing "can be turned into a map"
+        (is (= {:key "foo" :value "bar"} (->map sample1 kvp)))))))
