@@ -1338,6 +1338,877 @@ public final class Sample1 {
     // @@protoc_insertion_point(class_scope:protoclj_sample.NestedObject)
   }
 
+  public interface RepeatedObjectOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // repeated string messages = 1;
+    /**
+     * <code>repeated string messages = 1;</code>
+     */
+    java.util.List<java.lang.String>
+    getMessagesList();
+    /**
+     * <code>repeated string messages = 1;</code>
+     */
+    int getMessagesCount();
+    /**
+     * <code>repeated string messages = 1;</code>
+     */
+    java.lang.String getMessages(int index);
+    /**
+     * <code>repeated string messages = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getMessagesBytes(int index);
+
+    // repeated .protoclj_sample.KeyValuePair kvps = 2;
+    /**
+     * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+     */
+    java.util.List<protoclj.Sample1.KeyValuePair> 
+        getKvpsList();
+    /**
+     * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+     */
+    protoclj.Sample1.KeyValuePair getKvps(int index);
+    /**
+     * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+     */
+    int getKvpsCount();
+    /**
+     * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+     */
+    java.util.List<? extends protoclj.Sample1.KeyValuePairOrBuilder> 
+        getKvpsOrBuilderList();
+    /**
+     * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+     */
+    protoclj.Sample1.KeyValuePairOrBuilder getKvpsOrBuilder(
+        int index);
+  }
+  /**
+   * Protobuf type {@code protoclj_sample.RepeatedObject}
+   */
+  public static final class RepeatedObject extends
+      com.google.protobuf.GeneratedMessage
+      implements RepeatedObjectOrBuilder {
+    // Use RepeatedObject.newBuilder() to construct.
+    private RepeatedObject(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private RepeatedObject(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final RepeatedObject defaultInstance;
+    public static RepeatedObject getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public RepeatedObject getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private RepeatedObject(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                messages_ = new com.google.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              messages_.add(input.readBytes());
+              break;
+            }
+            case 18: {
+              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                kvps_ = new java.util.ArrayList<protoclj.Sample1.KeyValuePair>();
+                mutable_bitField0_ |= 0x00000002;
+              }
+              kvps_.add(input.readMessage(protoclj.Sample1.KeyValuePair.PARSER, extensionRegistry));
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+          messages_ = new com.google.protobuf.UnmodifiableLazyStringList(messages_);
+        }
+        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+          kvps_ = java.util.Collections.unmodifiableList(kvps_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return protoclj.Sample1.internal_static_protoclj_sample_RepeatedObject_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return protoclj.Sample1.internal_static_protoclj_sample_RepeatedObject_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              protoclj.Sample1.RepeatedObject.class, protoclj.Sample1.RepeatedObject.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<RepeatedObject> PARSER =
+        new com.google.protobuf.AbstractParser<RepeatedObject>() {
+      public RepeatedObject parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new RepeatedObject(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<RepeatedObject> getParserForType() {
+      return PARSER;
+    }
+
+    // repeated string messages = 1;
+    public static final int MESSAGES_FIELD_NUMBER = 1;
+    private com.google.protobuf.LazyStringList messages_;
+    /**
+     * <code>repeated string messages = 1;</code>
+     */
+    public java.util.List<java.lang.String>
+        getMessagesList() {
+      return messages_;
+    }
+    /**
+     * <code>repeated string messages = 1;</code>
+     */
+    public int getMessagesCount() {
+      return messages_.size();
+    }
+    /**
+     * <code>repeated string messages = 1;</code>
+     */
+    public java.lang.String getMessages(int index) {
+      return messages_.get(index);
+    }
+    /**
+     * <code>repeated string messages = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getMessagesBytes(int index) {
+      return messages_.getByteString(index);
+    }
+
+    // repeated .protoclj_sample.KeyValuePair kvps = 2;
+    public static final int KVPS_FIELD_NUMBER = 2;
+    private java.util.List<protoclj.Sample1.KeyValuePair> kvps_;
+    /**
+     * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+     */
+    public java.util.List<protoclj.Sample1.KeyValuePair> getKvpsList() {
+      return kvps_;
+    }
+    /**
+     * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+     */
+    public java.util.List<? extends protoclj.Sample1.KeyValuePairOrBuilder> 
+        getKvpsOrBuilderList() {
+      return kvps_;
+    }
+    /**
+     * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+     */
+    public int getKvpsCount() {
+      return kvps_.size();
+    }
+    /**
+     * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+     */
+    public protoclj.Sample1.KeyValuePair getKvps(int index) {
+      return kvps_.get(index);
+    }
+    /**
+     * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+     */
+    public protoclj.Sample1.KeyValuePairOrBuilder getKvpsOrBuilder(
+        int index) {
+      return kvps_.get(index);
+    }
+
+    private void initFields() {
+      messages_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      kvps_ = java.util.Collections.emptyList();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      for (int i = 0; i < getKvpsCount(); i++) {
+        if (!getKvps(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      for (int i = 0; i < messages_.size(); i++) {
+        output.writeBytes(1, messages_.getByteString(i));
+      }
+      for (int i = 0; i < kvps_.size(); i++) {
+        output.writeMessage(2, kvps_.get(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      {
+        int dataSize = 0;
+        for (int i = 0; i < messages_.size(); i++) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(messages_.getByteString(i));
+        }
+        size += dataSize;
+        size += 1 * getMessagesList().size();
+      }
+      for (int i = 0; i < kvps_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, kvps_.get(i));
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static protoclj.Sample1.RepeatedObject parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static protoclj.Sample1.RepeatedObject parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static protoclj.Sample1.RepeatedObject parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static protoclj.Sample1.RepeatedObject parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static protoclj.Sample1.RepeatedObject parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static protoclj.Sample1.RepeatedObject parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static protoclj.Sample1.RepeatedObject parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static protoclj.Sample1.RepeatedObject parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static protoclj.Sample1.RepeatedObject parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static protoclj.Sample1.RepeatedObject parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(protoclj.Sample1.RepeatedObject prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code protoclj_sample.RepeatedObject}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements protoclj.Sample1.RepeatedObjectOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return protoclj.Sample1.internal_static_protoclj_sample_RepeatedObject_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return protoclj.Sample1.internal_static_protoclj_sample_RepeatedObject_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                protoclj.Sample1.RepeatedObject.class, protoclj.Sample1.RepeatedObject.Builder.class);
+      }
+
+      // Construct using protoclj.Sample1.RepeatedObject.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getKvpsFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        messages_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        if (kvpsBuilder_ == null) {
+          kvps_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+        } else {
+          kvpsBuilder_.clear();
+        }
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return protoclj.Sample1.internal_static_protoclj_sample_RepeatedObject_descriptor;
+      }
+
+      public protoclj.Sample1.RepeatedObject getDefaultInstanceForType() {
+        return protoclj.Sample1.RepeatedObject.getDefaultInstance();
+      }
+
+      public protoclj.Sample1.RepeatedObject build() {
+        protoclj.Sample1.RepeatedObject result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public protoclj.Sample1.RepeatedObject buildPartial() {
+        protoclj.Sample1.RepeatedObject result = new protoclj.Sample1.RepeatedObject(this);
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          messages_ = new com.google.protobuf.UnmodifiableLazyStringList(
+              messages_);
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.messages_ = messages_;
+        if (kvpsBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) == 0x00000002)) {
+            kvps_ = java.util.Collections.unmodifiableList(kvps_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
+          result.kvps_ = kvps_;
+        } else {
+          result.kvps_ = kvpsBuilder_.build();
+        }
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof protoclj.Sample1.RepeatedObject) {
+          return mergeFrom((protoclj.Sample1.RepeatedObject)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(protoclj.Sample1.RepeatedObject other) {
+        if (other == protoclj.Sample1.RepeatedObject.getDefaultInstance()) return this;
+        if (!other.messages_.isEmpty()) {
+          if (messages_.isEmpty()) {
+            messages_ = other.messages_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureMessagesIsMutable();
+            messages_.addAll(other.messages_);
+          }
+          onChanged();
+        }
+        if (kvpsBuilder_ == null) {
+          if (!other.kvps_.isEmpty()) {
+            if (kvps_.isEmpty()) {
+              kvps_ = other.kvps_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureKvpsIsMutable();
+              kvps_.addAll(other.kvps_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.kvps_.isEmpty()) {
+            if (kvpsBuilder_.isEmpty()) {
+              kvpsBuilder_.dispose();
+              kvpsBuilder_ = null;
+              kvps_ = other.kvps_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+              kvpsBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getKvpsFieldBuilder() : null;
+            } else {
+              kvpsBuilder_.addAllMessages(other.kvps_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        for (int i = 0; i < getKvpsCount(); i++) {
+          if (!getKvps(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        protoclj.Sample1.RepeatedObject parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (protoclj.Sample1.RepeatedObject) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // repeated string messages = 1;
+      private com.google.protobuf.LazyStringList messages_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureMessagesIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          messages_ = new com.google.protobuf.LazyStringArrayList(messages_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+      /**
+       * <code>repeated string messages = 1;</code>
+       */
+      public java.util.List<java.lang.String>
+          getMessagesList() {
+        return java.util.Collections.unmodifiableList(messages_);
+      }
+      /**
+       * <code>repeated string messages = 1;</code>
+       */
+      public int getMessagesCount() {
+        return messages_.size();
+      }
+      /**
+       * <code>repeated string messages = 1;</code>
+       */
+      public java.lang.String getMessages(int index) {
+        return messages_.get(index);
+      }
+      /**
+       * <code>repeated string messages = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getMessagesBytes(int index) {
+        return messages_.getByteString(index);
+      }
+      /**
+       * <code>repeated string messages = 1;</code>
+       */
+      public Builder setMessages(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureMessagesIsMutable();
+        messages_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string messages = 1;</code>
+       */
+      public Builder addMessages(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureMessagesIsMutable();
+        messages_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string messages = 1;</code>
+       */
+      public Builder addAllMessages(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureMessagesIsMutable();
+        super.addAll(values, messages_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string messages = 1;</code>
+       */
+      public Builder clearMessages() {
+        messages_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string messages = 1;</code>
+       */
+      public Builder addMessagesBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureMessagesIsMutable();
+        messages_.add(value);
+        onChanged();
+        return this;
+      }
+
+      // repeated .protoclj_sample.KeyValuePair kvps = 2;
+      private java.util.List<protoclj.Sample1.KeyValuePair> kvps_ =
+        java.util.Collections.emptyList();
+      private void ensureKvpsIsMutable() {
+        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+          kvps_ = new java.util.ArrayList<protoclj.Sample1.KeyValuePair>(kvps_);
+          bitField0_ |= 0x00000002;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilder<
+          protoclj.Sample1.KeyValuePair, protoclj.Sample1.KeyValuePair.Builder, protoclj.Sample1.KeyValuePairOrBuilder> kvpsBuilder_;
+
+      /**
+       * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+       */
+      public java.util.List<protoclj.Sample1.KeyValuePair> getKvpsList() {
+        if (kvpsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(kvps_);
+        } else {
+          return kvpsBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+       */
+      public int getKvpsCount() {
+        if (kvpsBuilder_ == null) {
+          return kvps_.size();
+        } else {
+          return kvpsBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+       */
+      public protoclj.Sample1.KeyValuePair getKvps(int index) {
+        if (kvpsBuilder_ == null) {
+          return kvps_.get(index);
+        } else {
+          return kvpsBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+       */
+      public Builder setKvps(
+          int index, protoclj.Sample1.KeyValuePair value) {
+        if (kvpsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureKvpsIsMutable();
+          kvps_.set(index, value);
+          onChanged();
+        } else {
+          kvpsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+       */
+      public Builder setKvps(
+          int index, protoclj.Sample1.KeyValuePair.Builder builderForValue) {
+        if (kvpsBuilder_ == null) {
+          ensureKvpsIsMutable();
+          kvps_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          kvpsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+       */
+      public Builder addKvps(protoclj.Sample1.KeyValuePair value) {
+        if (kvpsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureKvpsIsMutable();
+          kvps_.add(value);
+          onChanged();
+        } else {
+          kvpsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+       */
+      public Builder addKvps(
+          int index, protoclj.Sample1.KeyValuePair value) {
+        if (kvpsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureKvpsIsMutable();
+          kvps_.add(index, value);
+          onChanged();
+        } else {
+          kvpsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+       */
+      public Builder addKvps(
+          protoclj.Sample1.KeyValuePair.Builder builderForValue) {
+        if (kvpsBuilder_ == null) {
+          ensureKvpsIsMutable();
+          kvps_.add(builderForValue.build());
+          onChanged();
+        } else {
+          kvpsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+       */
+      public Builder addKvps(
+          int index, protoclj.Sample1.KeyValuePair.Builder builderForValue) {
+        if (kvpsBuilder_ == null) {
+          ensureKvpsIsMutable();
+          kvps_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          kvpsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+       */
+      public Builder addAllKvps(
+          java.lang.Iterable<? extends protoclj.Sample1.KeyValuePair> values) {
+        if (kvpsBuilder_ == null) {
+          ensureKvpsIsMutable();
+          super.addAll(values, kvps_);
+          onChanged();
+        } else {
+          kvpsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+       */
+      public Builder clearKvps() {
+        if (kvpsBuilder_ == null) {
+          kvps_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          onChanged();
+        } else {
+          kvpsBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+       */
+      public Builder removeKvps(int index) {
+        if (kvpsBuilder_ == null) {
+          ensureKvpsIsMutable();
+          kvps_.remove(index);
+          onChanged();
+        } else {
+          kvpsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+       */
+      public protoclj.Sample1.KeyValuePair.Builder getKvpsBuilder(
+          int index) {
+        return getKvpsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+       */
+      public protoclj.Sample1.KeyValuePairOrBuilder getKvpsOrBuilder(
+          int index) {
+        if (kvpsBuilder_ == null) {
+          return kvps_.get(index);  } else {
+          return kvpsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+       */
+      public java.util.List<? extends protoclj.Sample1.KeyValuePairOrBuilder> 
+           getKvpsOrBuilderList() {
+        if (kvpsBuilder_ != null) {
+          return kvpsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(kvps_);
+        }
+      }
+      /**
+       * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+       */
+      public protoclj.Sample1.KeyValuePair.Builder addKvpsBuilder() {
+        return getKvpsFieldBuilder().addBuilder(
+            protoclj.Sample1.KeyValuePair.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+       */
+      public protoclj.Sample1.KeyValuePair.Builder addKvpsBuilder(
+          int index) {
+        return getKvpsFieldBuilder().addBuilder(
+            index, protoclj.Sample1.KeyValuePair.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .protoclj_sample.KeyValuePair kvps = 2;</code>
+       */
+      public java.util.List<protoclj.Sample1.KeyValuePair.Builder> 
+           getKvpsBuilderList() {
+        return getKvpsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          protoclj.Sample1.KeyValuePair, protoclj.Sample1.KeyValuePair.Builder, protoclj.Sample1.KeyValuePairOrBuilder> 
+          getKvpsFieldBuilder() {
+        if (kvpsBuilder_ == null) {
+          kvpsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              protoclj.Sample1.KeyValuePair, protoclj.Sample1.KeyValuePair.Builder, protoclj.Sample1.KeyValuePairOrBuilder>(
+                  kvps_,
+                  ((bitField0_ & 0x00000002) == 0x00000002),
+                  getParentForChildren(),
+                  isClean());
+          kvps_ = null;
+        }
+        return kvpsBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:protoclj_sample.RepeatedObject)
+    }
+
+    static {
+      defaultInstance = new RepeatedObject(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:protoclj_sample.RepeatedObject)
+  }
+
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_protoclj_sample_KeyValuePair_descriptor;
   private static
@@ -1348,6 +2219,11 @@ public final class Sample1 {
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_protoclj_sample_NestedObject_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_protoclj_sample_RepeatedObject_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_protoclj_sample_RepeatedObject_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -1361,7 +2237,9 @@ public final class Sample1 {
       "protoclj_sample\"*\n\014KeyValuePair\022\013\n\003key\030\001" +
       " \002(\t\022\r\n\005value\030\002 \002(\t\"H\n\014NestedObject\022\014\n\004n" +
       "ame\030\001 \002(\t\022*\n\003kvp\030\002 \002(\0132\035.protoclj_sample" +
-      ".KeyValuePairB\n\n\010protoclj"
+      ".KeyValuePair\"O\n\016RepeatedObject\022\020\n\010messa" +
+      "ges\030\001 \003(\t\022+\n\004kvps\030\002 \003(\0132\035.protoclj_sampl" +
+      "e.KeyValuePairB\n\n\010protoclj"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -1380,6 +2258,12 @@ public final class Sample1 {
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_protoclj_sample_NestedObject_descriptor,
               new java.lang.String[] { "Name", "Kvp", });
+          internal_static_protoclj_sample_RepeatedObject_descriptor =
+            getDescriptor().getMessageTypes().get(2);
+          internal_static_protoclj_sample_RepeatedObject_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_protoclj_sample_RepeatedObject_descriptor,
+              new java.lang.String[] { "Messages", "Kvps", });
           return null;
         }
       };

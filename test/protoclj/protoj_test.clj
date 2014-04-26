@@ -2,13 +2,16 @@
   (:require [protoclj.protoj :refer :all]
             [clojure.test :refer :all])
   (:import [protoclj Sample1$KeyValuePair
-                     Sample1$NestedObject]))
+                     Sample1$NestedObject
+                     Sample1$RepeatedObject]))
 
 (set! *warn-on-reflection* true)
 
 (defprotos sample1
-  key-value-pair Sample1$KeyValuePair
-  nested-object  Sample1$NestedObject)
+  key-value-pair  Sample1$KeyValuePair
+  nested-object   Sample1$NestedObject
+  repeated-object Sample1$RepeatedObject
+  )
 
 (deftest very-simple-protobufs
   (testing "can be read from"
@@ -55,6 +58,21 @@
   (testing "throws an exception with data missing"
     (is (thrown? com.google.protobuf.UninitializedMessageException
                  (nested-object {:name "name"})))))
+
+(deftest a-protobuf-with-a-repeated-field
+  (testing "can be read from"
+    (let [proto-object (-> (Sample1$RepeatedObject/newBuilder)
+                           (.addMessages "foo")
+                           .build)
+          kvp (repeated-object proto-object)]
+      (is (= ["foo"] (proto-get kvp :messages)))
+
+      (testing "can be turned into a map"
+        (is (= {:messages ["foo"] :kvps []} (->map sample1 kvp))))))
+
+  (testing "it can be parsed from a map"
+    (let [proto (repeated-object {:messages ["foo" "bar"]})]
+      (is (= ["foo" "bar"] (proto-get proto :messages))))))
 
 (deftest coersing-to-a-protobuf
   (let [proto-object (-> (Sample1$KeyValuePair/newBuilder)

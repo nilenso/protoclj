@@ -1,9 +1,8 @@
 ;; Pronounced Protege
 (ns protoclj.protoj
   (:require [clojure.java.io])
-  (:import [com.google.protobuf
-            GeneratedMessage$Builder
-            ByteString]))
+  (:import [com.google.protobuf GeneratedMessage$Builder ByteString]
+           [java.lang Iterable]))
 
 (defprotocol ProtobufMap
   (proto-get [m k])
@@ -44,14 +43,27 @@
   (or (= ByteString type)
       (= GeneratedMessage$Builder (.getSuperclass type))))
 
-(defn- regular-attribute [read-interface builder-clazz ^java.lang.reflect.Method function type]
-  {:keyword (keywordize-fn function)
+(defn- regular-attribute [kw read-interface builder-clazz ^java.lang.reflect.Method function type]
+  {:keyword kw
    :reader (.getMethod ^Class read-interface
                        (clojure.string/replace (.getName function) #"^set" "get")
                        nil)
    :writer (.getMethod ^Class builder-clazz
                        (.getName function)
-                       (into-array Class [type]))})
+                       (into-array Class [type]))
+   :type type})
+
+(defn- repeated-attribute [kw read-interface builder-clazz single-setter-name type]
+  (let [reader-name (-> single-setter-name
+                        (clojure.string/replace #"set" "get")
+                        (str "List"))
+        setter-name (-> single-setter-name
+                        (clojure.string/replace #"set" "addAll"))]
+    {:keyword kw
+     :reader (.getMethod ^Class read-interface reader-name nil)
+     :writer (.getMethod ^Class builder-clazz setter-name (into-array Class [Iterable]))
+     :type type
+     :list true}))
 
 (defn- proto-attributes [clazz-sym]
   (let [clazz ^Class (eval clazz-sym)
@@ -63,16 +75,19 @@
         builder-clazz ^Class (-> clazz (.getMethod "newBuilder" nil) .getReturnType)]
     (for [function (.getDeclaredMethods builder-clazz)
           :when (.startsWith (.getName function) "set")
-          :let [param-types (.getParameterTypes function)
+          :let [kw (keywordize-fn function)
+                param-types (.getParameterTypes function)
                 type (last param-types)]
           :when (not (internal-setter? type))]
-      (regular-attribute read-interface builder-clazz function type))))
+      (if (= 1 (count param-types))
+        (regular-attribute kw read-interface builder-clazz function type)
+        (repeated-attribute kw read-interface builder-clazz (.getName function) type)))))
 
 (defn- fetch-from-proto [this bindings-map attribute]
   "Returns a sexp that can fetch the key from the protobuf.
   Pass in nil to bindings-map to circumvent nested translation"
   (let [fn ^java.lang.reflect.Method (:reader attribute)
-        return-type (.getReturnType fn)
+        return-type ^Class (:type attribute)
         base (list (symbol (str "." (.getName fn))) this)]
     (if-let [mapper (get bindings-map return-type)]
       (list mapper base)
