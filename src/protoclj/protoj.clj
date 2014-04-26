@@ -1,5 +1,5 @@
-(ns protoclj.protoj)
 ;; Pronounced Protege
+(ns protoclj.protoj)
 
 (defprotocol ProtosMap
   (proto-get [m k])
@@ -48,7 +48,7 @@
              nil))
          (proto-keys [_] ~(vec (map keywordize-fn fns)))))))
 
-(defmacro defproto-readers [_ & bindings-seq]
+(defmacro defprotos [_ & bindings-seq]
   (let [bindings (->> bindings-seq
                       (partition-all 2)
                       (map reverse)
