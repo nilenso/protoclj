@@ -67,6 +67,7 @@
        keyword))
 
 (defn- protocol-name [^Class class]
+  "Random name for a protocol representing the class builder"
   (-> class
       .getName
       (clojure.string/replace #"[^a-zA-Z1-9]" "-")
@@ -75,6 +76,7 @@
 ;; Magic
 
 (defn- build-reader [this fns bindings-map]
+  "The main reify that can get different params"
   `(reify ProtobufMap
      (proto-get [_# k#]
        (case k#
@@ -88,6 +90,7 @@
      (proto-obj [_#] ~this)))
 
 (defn- build-from-map [map clazz binding-map]
+  "Generate the reify from a map"
   `(-> (. ~clazz ~'newBuilder)
        ~@(for [^java.lang.reflect.Method fn (get-writer-methods clazz)
                :let [[^Class type] (.getParameterTypes fn)
