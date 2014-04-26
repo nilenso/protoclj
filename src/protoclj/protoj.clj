@@ -51,7 +51,9 @@
    :writer (.getMethod ^Class builder-clazz
                        (.getName function)
                        (into-array Class [type]))
-   :type type})
+   :type type
+   :apply-mapping (fn [sexp mapper]
+                    `(~mapper ~sexp))})
 
 (defn- repeated-attribute [kw read-interface builder-clazz single-setter-name type]
   (let [reader-name (-> single-setter-name
@@ -63,7 +65,8 @@
      :reader (.getMethod ^Class read-interface reader-name nil)
      :writer (.getMethod ^Class builder-clazz setter-name (into-array Class [Iterable]))
      :type type
-     :list true}))
+     :apply-mapping (fn [sexp mapper]
+                      `(doall (map ~mapper ~sexp)))}))
 
 (defn- proto-attributes [clazz-sym]
   (let [clazz ^Class (eval clazz-sym)
@@ -90,7 +93,7 @@
         return-type ^Class (:type attribute)
         sexp `(~(symbol (str "." (.getName fn))) ~this)
         sexp (if-let [mapper (get bindings-map return-type)]
-               `(~mapper ~sexp)
+               ((:apply-mapping attribute) sexp mapper)
                sexp)]
     sexp))
 

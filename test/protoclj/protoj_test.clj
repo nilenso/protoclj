@@ -63,12 +63,17 @@
   (testing "can be read from"
     (let [proto-object (-> (Sample1$RepeatedObject/newBuilder)
                            (.addMessages "foo")
+                           ;; (.addKvps (-> (Sample1$KeyValuePair/newBuilder)
+                           ;;               (.setKey "foo")
+                           ;;               (.setValue "bar")
+                           ;;               .build))
                            .build)
-          kvp (repeated-object proto-object)]
-      (is (= ["foo"] (proto-get kvp :messages)))
+          proto (repeated-object proto-object)]
+      (is (= ["foo"] (proto-get proto :messages)))
+      ;; (is (= ["foo"] (-> proto (proto-get :kvps) first (proto-get :foo))))
 
       (testing "can be turned into a map"
-        (is (= {:messages ["foo"] :kvps []} (->map sample1 kvp))))))
+        (is (= {:messages ["foo"] :kvps []} (->map sample1 proto))))))
 
   (testing "it can be parsed from a map"
     (let [proto (repeated-object {:messages ["foo" "bar"]})]
