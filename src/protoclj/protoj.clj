@@ -38,13 +38,13 @@
 ;; Reflection and Fetching
 
 (defn- proto-attributes [clazz-sym]
-  (let [^Class clazz (eval clazz-sym)
-        ^Class read-interface
+  (let [clazz ^Class (eval clazz-sym)
+        read-interface ^Class
         (->> clazz
              .getInterfaces
              (filter #(.startsWith (.getName ^Class %) (.getName clazz)))
              first)
-        ^Class builder-clazz (-> clazz (.getMethod "newBuilder" nil) .getReturnType)]
+        builder-clazz ^Class (-> clazz (.getMethod "newBuilder" nil) .getReturnType)]
     (for [function (.getDeclaredMethods read-interface)
           :when (.startsWith (.getName function) "has")
           :let [reader-fn (.getMethod read-interface (clojure.string/replace (.getName function) #"^has" "get") nil)
@@ -57,7 +57,7 @@
 (defn- fetch-from-proto [this bindings-map attribute]
   "Returns a sexp that can fetch the key from the protobuf.
   Pass in nil to bindings-map to circumvent nested translation"
-  (let [^java.lang.reflect.Method fn (:reader attribute)
+  (let [fn ^java.lang.reflect.Method (:reader attribute)
         return-type (.getReturnType fn)
         base (list (symbol (str "." (.getName fn))) this)]
     (if-let [mapper (get bindings-map return-type)]
