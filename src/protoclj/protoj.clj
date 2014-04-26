@@ -57,10 +57,16 @@
                       (map vec))
         bindings-map (reduce (fn [m [clazz fn]] (assoc m (eval clazz) fn)) {} bindings)]
     `(do ~@(map #(define-proto % bindings-map) bindings)
-         (def ~bindings-name ~bindings-map))))
+         (def ~bindings-name {:protobuf-mappers ~bindings-map}))))
 
 (defn ->map [bindings-map object]
   (persistent!
-   (reduce #(assoc! %1 %2 (proto-get object %2))
+   (reduce #(assoc! %1 %2
+                    (let [result (proto-get object %2)]
+                      (if-let [mapping (bindings-map (class result))]
+                        (do
+                          (prn mapping)
+                          (mapping result))
+                        result)))
            (transient {})
            (proto-keys object))))

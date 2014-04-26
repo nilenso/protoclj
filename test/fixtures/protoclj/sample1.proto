@@ -6,3 +6,8 @@ message KeyValuePair {
   required string key     = 1;
   required string value   = 2;
 }
+
+message NestedObject {
+  required string name      = 1;
+  required KeyValuePair kvp = 2;
+}
