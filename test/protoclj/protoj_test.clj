@@ -44,7 +44,13 @@
       (is (= "bar" (proto-get (proto-get nested :kvp) :value)))
 
       (testing "can be turned into a map"
-        (is (= {:name "name" :kvp {:key "foo" :value "bar"}} (->map sample1 nested)))))))
+        (is (= {:name "name" :kvp {:key "foo" :value "bar"}} (->map sample1 nested))))))
+
+  (testing "can be parsed from a map"
+    (let [nested (nested-object {:name "name" :kvp {:key "foo" :value "bar"}})]
+      (is (= "name" (proto-get nested :name)))
+      (is (= "foo" (proto-get (proto-get nested :kvp) :key)))
+      (is (= "bar" (proto-get (proto-get nested :kvp) :value))))))
 
 (deftest coersing-to-a-protobuf
   (let [proto-object (-> (Sample1$KeyValuePair/newBuilder)

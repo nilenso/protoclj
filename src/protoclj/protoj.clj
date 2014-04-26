@@ -88,14 +88,17 @@
      (proto-keys [_#] ~(vec (map keywordize-fn fns)))
      (proto-obj [_#] ~this)))
 
-(defn- build-from-map [map clazz fns]
-  `(-> (. ~clazz newBuilder)
-       ~@(for [^java.lang.reflect.Method fn fns
+(defn- build-from-map [map clazz binding-map]
+  `(-> (. ~clazz ~'newBuilder)
+       ~@(for [^java.lang.reflect.Method fn (get-writer-methods clazz)
                :let [[^Class type] (.getParameterTypes fn)
                      fn-symbol (symbol (str "." (.getName fn)))
                      kw (keywordize-fn fn)
-                     type-sym (vary-meta (gensym "val") assoc :tag type)]]
-           `(~fn-symbol (let [~type-sym (~kw ~map)] ~type-sym)))
+                     body (if-let [mapper (get binding-map type)]
+                            `(proto-obj (~mapper (~kw ~map)))
+                            (list kw map))
+                     type-sym (vary-meta (gensym "val") assoc :tag (-> type .getName symbol))]]
+           `(~fn-symbol (let [~type-sym ~body] ~type-sym)))
        (.build)))
 
 (defn- define-proto [[clazz fn-name] bindings-map]
@@ -113,16 +116,16 @@
          (~fn-name [_#] nil)
 
          ~byte-array-type
-         (~fn-name [~byte-array-symbol] (~fn-name (. ~clazz parseFrom ~byte-array-symbol)))
+         (~fn-name [~byte-array-symbol] (~fn-name (. ~clazz ~'parseFrom ~byte-array-symbol)))
 
          java.io.InputStream
-         (~fn-name [input-stream#] (~fn-name (. ~clazz parseFrom input-stream#)))
-
-         clojure.lang.IPersistentMap
-         (~fn-name [~map-sym] (~fn-name ~(build-from-map map-sym clazz (get-writer-methods clazz))))
+         (~fn-name [input-stream#] (~fn-name (. ~clazz ~'parseFrom input-stream#)))
 
          ~clazz
-         (~fn-name [~this] ~(build-reader this (get-reader-methods clazz) bindings-map))))))
+         (~fn-name [~this] ~(build-reader this (get-reader-methods clazz) bindings-map))
+
+         clojure.lang.IPersistentMap
+         (~fn-name [~map-sym] (~fn-name ~(build-from-map map-sym clazz bindings-map)))))))
 
 (defmacro defprotos [bindings-name & bindings-seq]
   "Public macro. See tests for usage"
