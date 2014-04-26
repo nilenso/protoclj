@@ -40,3 +40,15 @@
 
       (testing "can be turned into a map"
         (is (= {:name "name" :kvp {:key "foo" :value "bar"}} (->map sample1 nested)))))))
+
+(deftest coersing-to-a-protobuf
+  (let [proto-object (-> (Sample1$KeyValuePair/newBuilder)
+                        (.setKey "foo")
+                        (.setValue "bar")
+                        .build)]
+    (comment testing "it reads from a byte array"
+      (let [byte-array (.toByteArray proto-object)
+            kvp (key-value-pair byte-array)]
+
+        (is (= "foo" (proto-get kvp :key)))
+        (is (= "bar" (proto-get kvp :value)))))))

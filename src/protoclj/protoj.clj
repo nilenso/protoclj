@@ -1,11 +1,14 @@
 ;; Pronounced Protege
-(ns protoclj.protoj)
+(ns protoclj.protoj
+  (:require [clojure.java.io]))
 
 (defprotocol ProtobufMap
   (proto-get [m k])
   (proto-get-raw [m k])
   (proto-keys [m])
   (proto-obj [m]))
+
+;; Reflection and Fetching
 
 (defn- get-relevant-methods [^Class clazz]
   "Returns a list of all protobuf related functions for a class"
@@ -23,6 +26,17 @@
          (remove #{"getField"})
          (map functions))))
 
+(defn- fetch-from-proto [this bindings-map ^java.lang.reflect.Method fn]
+  "Returns a sexp that can fetch the key from the protobuf.
+  Pass in nil to bindings-map to circumvent nested translation"
+  (let [return-type (.getReturnType fn)
+        base (list (symbol (str "." (.getName fn))) this)]
+    (if-let [mapper (get bindings-map return-type)]
+      (list mapper base)
+      base)))
+
+;; String Munging
+
 (defn- keywordize-fn [^java.lang.reflect.Method fn]
   "Returns a keyword name from a function getFooBar -> :foo-bar"
   (->> fn
@@ -34,31 +48,43 @@
        (#(clojure.string/replace % #"^get-" ""))
        keyword))
 
-(defn- fetch-from-proto [this bindings-map ^java.lang.reflect.Method fn]
-  "Returns a sexp that can fetch the key from the protobuf.
-   Pass in nil to bindings-map to circumvent nested translation"
-  (let [return-type (.getReturnType fn)
-        base (list (symbol (str "." (.getName fn))) this)]
-    (if-let [mapper (get bindings-map return-type)]
-      (list mapper base)
-      base)))
+(defn- protocol-name [^Class class]
+  (-> class
+      .getName
+      (clojure.string/replace #"[^a-zA-Z1-9]" "-")
+      gensym))
+
+;; Magic
 
 (defn- define-proto [[clazz fn-name] bindings-map]
   "Returns a sexp for defining the proto"
   (let [this (vary-meta (gensym "this") assoc :tag clazz)
-        fns (->> clazz eval get-relevant-methods)]
-    `(defn ~fn-name [~this]
-       (reify ProtobufMap
-         (proto-get [_ k#]
-           (case k#
-             ~@(mapcat #(list (keywordize-fn %) (fetch-from-proto this bindings-map %)) fns)
-             nil))
-         (proto-get-raw [_ k#]
-           (case k#
-             ~@(mapcat #(list (keywordize-fn %) (fetch-from-proto this nil %)) fns)
-             nil))
-         (proto-keys [_] ~(vec (map keywordize-fn fns)))
-         (proto-obj [_] ~this)))))
+        fns (-> clazz eval get-relevant-methods)
+        protocol-name (-> clazz eval protocol-name)]
+    `(do
+       (defprotocol ~protocol-name
+         (~fn-name [~this]))
+       (extend-protocol ~protocol-name
+         nil
+         (~fn-name [_#] nil)
+
+         ;(class (byte-array 0))
+         ;(~fn-name [_#] nil)
+         ;;(~fn-name [stream#] (~fn-name (. ~clazz parseFrom stream#)))
+
+         ~clazz
+         (~fn-name [~this]
+           (reify ProtobufMap
+             (proto-get [_# k#]
+               (case k#
+                 ~@(mapcat #(list (keywordize-fn %) (fetch-from-proto this bindings-map %)) fns)
+                 nil))
+             (proto-get-raw [_# k#]
+               (case k#
+                 ~@(mapcat #(list (keywordize-fn %) (fetch-from-proto this nil %)) fns)
+                 nil))
+             (proto-keys [_#] ~(vec (map keywordize-fn fns)))
+             (proto-obj [_#] ~this)))))))
 
 (defmacro defprotos [bindings-name & bindings-seq]
   "Public macro. See tests for usage"
