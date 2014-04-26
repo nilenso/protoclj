@@ -77,7 +77,8 @@
 
 (defn- build-reader [this fns bindings-map]
   "The main reify that can get different params"
-  `(reify ProtobufMap
+  `(reify
+     ProtobufMap
      (proto-get [_# k#]
        (case k#
          ~@(mapcat #(list (keywordize-fn %) (fetch-from-proto this bindings-map %)) fns)
@@ -87,7 +88,17 @@
          ~@(mapcat #(list (keywordize-fn %) (fetch-from-proto this nil %)) fns)
          nil))
      (proto-keys [_#] ~(vec (map keywordize-fn fns)))
-     (proto-obj [_#] ~this)))
+     (proto-obj [_#] ~this)
+
+     clojure.java.io.IOFactory
+     (make-input-stream [x# opts#]
+       (clojure.java.io/make-input-stream (.toByteArray ~this) opts#))
+     (make-output-stream [x# opts#]
+       (throw (IllegalArgumentException. (str "Cannot create an output stream from protobuf"))))
+     (make-reader [x# opts#]
+       (clojure.java.io/make-reader (clojure.java.io/make-input-stream x# opts#) opts#))
+     (make-writer [x# opts#]
+       (clojure.java.io/make-writer (clojure.java.io/make-output-stream x# opts#) opts#))))
 
 (defn- build-from-map [map clazz binding-map]
   "Generate the reify from a map"

@@ -72,4 +72,8 @@
       (let [input-stream (-> proto-object .toByteArray clojure.java.io/input-stream)
             kvp (key-value-pair input-stream)]
         (is (= "foo" (proto-get kvp :key)))
-        (is (= "bar" (proto-get kvp :value)))))))
+        (is (= "bar" (proto-get kvp :value)))))
+
+    (testing "it can be turned into an input stream"
+      (let [input-stream (-> proto-object key-value-pair clojure.java.io/input-stream)]
+        (is (not (nil? input-stream)))))))
