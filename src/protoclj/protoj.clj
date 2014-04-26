@@ -40,10 +40,9 @@
 
 ;; Reflection and Fetching
 
-(defn- internal-setter? [^java.lang.reflect.Method method]
-  (let [return-type (-> method .getGenericParameterTypes last)]
-    (or (= ByteString return-type)
-        (= GeneratedMessage$Builder (.getSuperclass return-type)))))
+(defn- internal-setter? [^Class type]
+  (or (= ByteString type)
+      (= GeneratedMessage$Builder (.getSuperclass type))))
 
 (defn- proto-attributes [clazz-sym]
   (let [clazz ^Class (eval clazz-sym)
@@ -55,7 +54,9 @@
         builder-clazz ^Class (-> clazz (.getMethod "newBuilder" nil) .getReturnType)]
     (for [function (.getDeclaredMethods builder-clazz)
           :when (.startsWith (.getName function) "set")
-          :when (not (internal-setter? function))
+          :let [param-types (.getParameterTypes function)
+                type (last param-types)]
+          :when (not (internal-setter? type))
           :let [reader-fn (.getMethod read-interface (clojure.string/replace (.getName function) #"^set" "get") nil)
                 val-type (.getReturnType reader-fn)
                 writer-fn (.getMethod builder-clazz (.getName function) (into-array Class [val-type]))]]
