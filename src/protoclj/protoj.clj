@@ -1,6 +1,9 @@
 ;; Pronounced Protege
 (ns protoclj.protoj
-  (:require [clojure.java.io]))
+  (:require [clojure.java.io])
+  (:import [com.google.protobuf
+            GeneratedMessage$Builder
+            ByteString]))
 
 (defprotocol ProtobufMap
   (proto-get [m k])
@@ -37,6 +40,11 @@
 
 ;; Reflection and Fetching
 
+(defn- internal-setter? [^java.lang.reflect.Method method]
+  (let [return-type (-> method .getGenericParameterTypes last)]
+    (or (= ByteString return-type)
+        (= GeneratedMessage$Builder (.getSuperclass return-type)))))
+
 (defn- proto-attributes [clazz-sym]
   (let [clazz ^Class (eval clazz-sym)
         read-interface ^Class
@@ -45,11 +53,12 @@
              (filter #(.startsWith (.getName ^Class %) (.getName clazz)))
              first)
         builder-clazz ^Class (-> clazz (.getMethod "newBuilder" nil) .getReturnType)]
-    (for [function (.getDeclaredMethods read-interface)
-          :when (.startsWith (.getName function) "has")
-          :let [reader-fn (.getMethod read-interface (clojure.string/replace (.getName function) #"^has" "get") nil)
+    (for [function (.getDeclaredMethods builder-clazz)
+          :when (.startsWith (.getName function) "set")
+          :when (not (internal-setter? function))
+          :let [reader-fn (.getMethod read-interface (clojure.string/replace (.getName function) #"^set" "get") nil)
                 val-type (.getReturnType reader-fn)
-                writer-fn (.getMethod builder-clazz (clojure.string/replace (.getName function) #"^has" "set") (into-array Class [val-type]))]]
+                writer-fn (.getMethod builder-clazz (.getName function) (into-array Class [val-type]))]]
       {:keyword (keywordize-fn reader-fn)
        :reader reader-fn
        :writer writer-fn})))
