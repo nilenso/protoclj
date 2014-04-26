@@ -8,6 +8,13 @@
   (proto-keys [m])
   (proto-obj [m]))
 
+(extend-protocol ProtobufMap
+  nil
+  (proto-get [m k] nil)
+  (proto-get-raw [m k] nil)
+  (proto-keys [m] nil)
+  (proto-obj [m] nil))
+
 ;; Reflection and Fetching
 
 (defn- get-relevant-methods [^Class clazz]
