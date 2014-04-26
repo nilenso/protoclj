@@ -44,6 +44,15 @@
   (or (= ByteString type)
       (= GeneratedMessage$Builder (.getSuperclass type))))
 
+(defn- regular-attribute [read-interface builder-clazz ^java.lang.reflect.Method function type]
+  {:keyword (keywordize-fn function)
+   :reader (.getMethod ^Class read-interface
+                       (clojure.string/replace (.getName function) #"^set" "get")
+                       nil)
+   :writer (.getMethod ^Class builder-clazz
+                       (.getName function)
+                       (into-array Class [type]))})
+
 (defn- proto-attributes [clazz-sym]
   (let [clazz ^Class (eval clazz-sym)
         read-interface ^Class
@@ -56,13 +65,8 @@
           :when (.startsWith (.getName function) "set")
           :let [param-types (.getParameterTypes function)
                 type (last param-types)]
-          :when (not (internal-setter? type))
-          :let [reader-fn (.getMethod read-interface (clojure.string/replace (.getName function) #"^set" "get") nil)
-                val-type (.getReturnType reader-fn)
-                writer-fn (.getMethod builder-clazz (.getName function) (into-array Class [val-type]))]]
-      {:keyword (keywordize-fn reader-fn)
-       :reader reader-fn
-       :writer writer-fn})))
+          :when (not (internal-setter? type))]
+      (regular-attribute read-interface builder-clazz function type))))
 
 (defn- fetch-from-proto [this bindings-map attribute]
   "Returns a sexp that can fetch the key from the protobuf.
