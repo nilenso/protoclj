@@ -40,10 +40,12 @@
 ;; Reflection and Fetching
 
 (defn- internal-setter? [^Class type]
+  "Check if the given class is part of an internal function"
   (or (= ByteString type)
       (= GeneratedMessage$Builder (.getSuperclass type))))
 
 (defn- regular-attribute [kw read-interface builder-clazz ^java.lang.reflect.Method function type]
+  "Build a map representing a regular attribute"
   {:keyword kw
    :reader (.getMethod ^Class read-interface
                        (clojure.string/replace (.getName function) #"^set" "get")
@@ -52,12 +54,13 @@
                        (.getName function)
                        (into-array Class [type]))
    :type type
-   :apply-mapping (fn [sexp mapper]
+   :apply-mapping (fn [sexp mapper]   ;; These two could go into a multi-method
                     `(~mapper ~sexp))
    :reverse-mapping (fn [sexp mapper]
                       `(proto-obj (~mapper ~sexp)))})
 
 (defn- repeated-attribute [kw read-interface builder-clazz single-setter-name type]
+  "Build a map representing a repeated attribute"
   (let [reader-name (-> single-setter-name
                         (clojure.string/replace #"set" "get")
                         (str "List"))
@@ -73,6 +76,8 @@
                         `(map (comp proto-obj ~mapper) ~sexp))}))
 
 (defn- proto-attributes [clazz-sym]
+  "Get a list of interesting attributes for the class.
+  Currently done by seeing all setters. If it accepts 2 args, it's a repeated attr."
   (let [clazz ^Class (eval clazz-sym)
         read-interface ^Class
         (->> clazz
@@ -184,6 +189,8 @@
            (build-proto-definition binding bindings-map))
        (def ~bindings-name {:protobuf-mappers ~bindings-map}))))
 
+;; This is the only place where some amount of runtime reflection happens.
+;; I really hope this is not slow
 (defn ->map [{:keys [protobuf-mappers] :as bindings-map} object]
   "Turn a ProtoMap into a map"
   (persistent!
