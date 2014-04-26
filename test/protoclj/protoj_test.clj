@@ -38,5 +38,5 @@
       (is (= "foo" (proto-get (proto-get nested :kvp) :key)))
       (is (= "bar" (proto-get (proto-get nested :kvp) :value)))
 
-      (comment testing "can be turned into a map"
+      (testing "can be turned into a map"
         (is (= {:name "name" :kvp {:key "foo" :value "bar"}} (->map sample1 nested)))))))

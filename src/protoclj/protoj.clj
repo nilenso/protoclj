@@ -3,10 +3,12 @@
 
 (defprotocol ProtobufMap
   (proto-get [m k])
+  (proto-get-raw [m k])
   (proto-keys [m])
   (proto-obj [m]))
 
 (defn- get-relevant-methods [^Class clazz]
+  "Returns a list of all protobuf related functions for a class"
   (let [interface (->> clazz
                        .getInterfaces
                        (filter #(.startsWith (.getName ^Class %) (.getName clazz)))
@@ -22,6 +24,7 @@
          (map functions))))
 
 (defn- keywordize-fn [^java.lang.reflect.Method fn]
+  "Returns a keyword name from a function getFooBar -> :foo-bar"
   (->> fn
        .getName
        (map #(if (Character/isUpperCase ^Character %)
@@ -32,13 +35,16 @@
        keyword))
 
 (defn- fetch-from-proto [this bindings-map ^java.lang.reflect.Method fn]
+  "Returns a sexp that can fetch the key from the protobuf.
+   Pass in nil to bindings-map to circumvent nested translation"
   (let [return-type (.getReturnType fn)
         base (list (symbol (str "." (.getName fn))) this)]
-    (if-let [mapper (bindings-map return-type)]
+    (if-let [mapper (get bindings-map return-type)]
       (list mapper base)
       base)))
 
 (defn- define-proto [[clazz fn-name] bindings-map]
+  "Returns a sexp for defining the proto"
   (let [this (vary-meta (gensym "this") assoc :tag clazz)
         fns (->> clazz eval get-relevant-methods)]
     `(defn ~fn-name [~this]
@@ -47,10 +53,15 @@
            (case k#
              ~@(mapcat #(list (keywordize-fn %) (fetch-from-proto this bindings-map %)) fns)
              nil))
+         (proto-get-raw [_ k#]
+           (case k#
+             ~@(mapcat #(list (keywordize-fn %) (fetch-from-proto this nil %)) fns)
+             nil))
          (proto-keys [_] ~(vec (map keywordize-fn fns)))
          (proto-obj [_] ~this)))))
 
 (defmacro defprotos [bindings-name & bindings-seq]
+  "Public macro. See tests for usage"
   (let [bindings (->> bindings-seq
                       (partition-all 2)
                       (map reverse)
@@ -59,14 +70,13 @@
     `(do ~@(map #(define-proto % bindings-map) bindings)
          (def ~bindings-name {:protobuf-mappers ~bindings-map}))))
 
-(defn ->map [bindings-map object]
+(defn ->map [{:keys [protobuf-mappers] :as bindings-map} object]
+  "Turn a ProtoMap into a map"
   (persistent!
    (reduce #(assoc! %1 %2
-                    (let [result (proto-get object %2)]
-                      (if-let [mapping (bindings-map (class result))]
-                        (do
-                          (prn mapping)
-                          (mapping result))
+                    (let [result (proto-get-raw object %2)]
+                      (if-let [mapping (protobuf-mappers (class result))]
+                        (->map bindings-map (mapping result))
                         result)))
            (transient {})
            (proto-keys object))))
