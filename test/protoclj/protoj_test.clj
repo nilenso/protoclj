@@ -72,7 +72,7 @@
       (is (= "foo" (-> proto (proto-get :kvps) first (proto-get :key))))
 
       (testing "can be turned into a map"
-        (is (= ["foo"] (:messages (->map sample1 proto)))))))
+        (is (= {:messages ["foo"] :kvps [{:key "foo" :value "bar"}]} (->map sample1 proto))))))
 
   (testing "it can be parsed from a map"
     (let [proto (repeated-object {:messages ["foo" "bar"]})]

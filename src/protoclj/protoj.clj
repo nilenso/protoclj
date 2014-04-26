@@ -183,10 +183,15 @@
 (defn ->map [{:keys [protobuf-mappers] :as bindings-map} object]
   "Turn a ProtoMap into a map"
   (persistent!
-   (reduce #(assoc! %1 %2
-                    (let [result (proto-get-raw object %2)]
-                      (if-let [mapping (protobuf-mappers (class result))]
-                        (->map bindings-map (mapping result))
-                        result)))
+   (reduce (fn [map key]
+             (assoc! map key
+                     (let [result (proto-get-raw object key)]
+                       (if (instance? Iterable result)
+                         (if-let [mapping (protobuf-mappers (class (first result)))]
+                           (reduce #(conj %1 (->map bindings-map (mapping %2))) [] result)
+                           (vec result))
+                         (if-let [mapping (protobuf-mappers (class result))]
+                           (->map bindings-map (mapping result))
+                           result)))))
            (transient {})
            (proto-keys object))))
