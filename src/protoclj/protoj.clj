@@ -17,33 +17,34 @@
          keys
          (filter #(.startsWith ^String % "has"))
          (map #(clojure.string/replace % #"^has" "get"))
+         (remove #{"getField"})
          (map functions))))
 
 (defn- keywordize-fn [^java.lang.reflect.Method fn]
   (->> fn
        .getName
-       (map #(if (Character/isUpperCase %)
+       (map #(if (Character/isUpperCase ^Character %)
                (str "-" (clojure.string/lower-case %))
                %))
        (apply str)
        (#(clojure.string/replace % #"^get-" ""))
        keyword))
 
-(defn- fetch-from-proto [this bindings ^java.lang.reflect.Method fn]
+(defn- fetch-from-proto [this bindings-map ^java.lang.reflect.Method fn]
   (let [return-type (.getReturnType fn)
         base (list (symbol (str "." (.getName fn))) this)]
-    (if-let [mapper (bindings return-type)]
+    (if-let [mapper (bindings-map return-type)]
       (list mapper base)
       base)))
 
-(defn- define-proto [[clazz fn-name] bindings]
+(defn- define-proto [[clazz fn-name] bindings-map]
   (let [this (vary-meta (gensym "this") assoc :tag clazz)
         fns (->> clazz eval get-relevant-methods)]
     `(defn ~fn-name [~this]
        (reify ProtosMap
          (proto-get [_ k#]
            (case k#
-             ~@(mapcat #(list (keywordize-fn %) (fetch-from-proto this bindings %)) fns)
+             ~@(mapcat #(list (keywordize-fn %) (fetch-from-proto this bindings-map %)) fns)
              nil))
          (proto-keys [_] ~(vec (map keywordize-fn fns)))))))
 
@@ -51,6 +52,6 @@
   (let [bindings (->> bindings-seq
                       (partition-all 2)
                       (map reverse)
-                      (map vec)
-                      (reduce (fn [m [clazz fn]] (assoc m (eval clazz) fn)) {}))]
-    `(do ~@(map #(define-proto % bindings) bindings))))
+                      (map vec))
+        bindings-map (reduce (fn [m [clazz fn]] (assoc m (eval clazz) fn)) {} bindings)]
+    `(do ~@(map #(define-proto % bindings-map) bindings))))
