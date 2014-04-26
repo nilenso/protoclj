@@ -39,11 +39,10 @@
   (let [^Class clazz (eval clazz-sym)
         readers (get-reader-methods clazz-sym)
         builder-clazz (-> clazz (.getMethod "newBuilder" nil) .getReturnType)]
-    (map #(let [reader ^java.lang.reflect.Method %
-                setter-name (-> reader .getName (clojure.string/replace #"^get" "set"))
-                type (.getReturnType reader)]
-            (.getMethod builder-clazz setter-name (into-array Class [type])))
-         readers)))
+    (for [reader readers
+          :let [setter-name (-> reader .getName (clojure.string/replace #"^get" "set"))
+                type (.getReturnType reader)]]
+      (.getMethod builder-clazz setter-name (into-array Class [type])))))
 
 (defn- fetch-from-proto [this bindings-map ^java.lang.reflect.Method fn]
   "Returns a sexp that can fetch the key from the protobuf.
@@ -101,7 +100,7 @@
            `(~fn-symbol (let [~type-sym ~body] ~type-sym)))
        (.build)))
 
-(defn- define-proto [[clazz fn-name] bindings-map]
+(defn- build-proto-definition [[clazz fn-name] bindings-map]
   "Returns a sexp for defining the proto"
   (let [this (vary-meta (gensym "this") assoc :tag clazz)
         protocol-name (-> clazz eval protocol-name)
@@ -134,8 +133,10 @@
                       (map reverse)
                       (map vec))
         bindings-map (reduce (fn [m [clazz fn]] (assoc m (eval clazz) fn)) {} bindings)]
-    `(do ~@(map #(define-proto % bindings-map) bindings)
-         (def ~bindings-name {:protobuf-mappers ~bindings-map}))))
+    `(do
+       ~@(for [binding bindings]
+           (build-proto-definition binding bindings-map))
+       (def ~bindings-name {:protobuf-mappers ~bindings-map}))))
 
 (defn ->map [{:keys [protobuf-mappers] :as bindings-map} object]
   "Turn a ProtoMap into a map"
