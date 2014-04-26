@@ -91,7 +91,8 @@
 
 (defn- build-from-map [map clazz binding-map]
   "Generate the reify from a map"
-  `(-> (. ~clazz ~'newBuilder)
+  (let [builder (gensym "builder")]
+    `(let [~builder (. ~clazz ~'newBuilder)]
        ~@(for [^java.lang.reflect.Method fn (get-writer-methods clazz)
                :let [[^Class type] (.getParameterTypes fn)
                      fn-symbol (symbol (str "." (.getName fn)))
@@ -100,8 +101,9 @@
                             `(proto-obj (~mapper (~kw ~map)))
                             (list kw map))
                      type-sym (vary-meta (gensym "val") assoc :tag (-> type .getName symbol))]]
-           `(~fn-symbol (let [~type-sym ~body] ~type-sym)))
-       (.build)))
+           `(when-let [~type-sym ~body]
+              (~fn-symbol ~builder ~type-sym)))
+       (.build ~builder))))
 
 (defn- build-proto-definition [[clazz fn-name] bindings-map]
   "Returns a sexp for defining the proto"

@@ -50,7 +50,11 @@
     (let [nested (nested-object {:name "name" :kvp {:key "foo" :value "bar"}})]
       (is (= "name" (proto-get nested :name)))
       (is (= "foo" (proto-get (proto-get nested :kvp) :key)))
-      (is (= "bar" (proto-get (proto-get nested :kvp) :value))))))
+      (is (= "bar" (proto-get (proto-get nested :kvp) :value)))))
+
+  (testing "throws an exception with data missing"
+    (is (thrown? com.google.protobuf.UninitializedMessageException
+                 (nested-object {:name "name"})))))
 
 (deftest coersing-to-a-protobuf
   (let [proto-object (-> (Sample1$KeyValuePair/newBuilder)
@@ -66,7 +70,6 @@
 
     (testing "it reads from an input stream"
       (let [input-stream (-> proto-object .toByteArray clojure.java.io/input-stream)
-            kvp (key-value-pair input-stream)
-            ]
+            kvp (key-value-pair input-stream)]
         (is (= "foo" (proto-get kvp :key)))
         (is (= "bar" (proto-get kvp :value)))))))
