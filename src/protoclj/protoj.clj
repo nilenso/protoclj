@@ -60,7 +60,9 @@
   "Returns a sexp for defining the proto"
   (let [this (vary-meta (gensym "this") assoc :tag clazz)
         fns (-> clazz eval get-relevant-methods)
-        protocol-name (-> clazz eval protocol-name)]
+        protocol-name (-> clazz eval protocol-name)
+        byte-array-type (-> 0 byte-array class .getName symbol)
+        byte-array-symbol (vary-meta (gensym "stream") assoc :tag byte-array-type)]
     `(do
        (defprotocol ~protocol-name
          (~fn-name [~this]))
@@ -68,9 +70,8 @@
          nil
          (~fn-name [_#] nil)
 
-         ;(class (byte-array 0))
-         ;(~fn-name [_#] nil)
-         ;;(~fn-name [stream#] (~fn-name (. ~clazz parseFrom stream#)))
+         ~byte-array-type
+         (~fn-name [~byte-array-symbol] (~fn-name (. ~clazz parseFrom ~byte-array-symbol)))
 
          ~clazz
          (~fn-name [~this]

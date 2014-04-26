@@ -46,7 +46,7 @@
                         (.setKey "foo")
                         (.setValue "bar")
                         .build)]
-    (comment testing "it reads from a byte array"
+    (testing "it reads from a byte array"
       (let [byte-array (.toByteArray proto-object)
             kvp (key-value-pair byte-array)]
 
