@@ -56,9 +56,7 @@
                        (.getName function)
                        (into-array Class [type]))
    :type type
-   :attribute-type :regular
-   :reverse-mapping (fn [sexp mapper]
-                      `(proto-obj (~mapper ~sexp)))})
+   :attribute-type :regular})
 
 (defn- repeated-attribute [kw read-interface builder-clazz single-setter-name type]
   "Build a map representing a repeated attribute"
@@ -71,9 +69,7 @@
      :reader (.getMethod ^Class read-interface reader-name nil)
      :writer (.getMethod ^Class builder-clazz setter-name (into-array Class [Iterable]))
      :type type
-     :attribute-type :repeated
-     :reverse-mapping (fn [sexp mapper]
-                        `(map (comp proto-obj ~mapper) ~sexp))}))
+     :attribute-type :repeated}))
 
 (defn- proto-attributes [clazz-sym]
   "Get a list of interesting attributes for the class.
@@ -124,6 +120,25 @@
     (if-let [mapper (get bindings-map (:type attribute))]
       `(vec (map (comp mapify ~mapper) ~sexp))
       `(vec ~sexp))))
+
+(defmulti #^{:private true} build-attribute-from-map #(:attribute-type %4))
+
+(defmethod build-attribute-from-map :regular [map builder bindings-map {:keys [type] :as attribute}]
+  (let [sexp `(~(:keyword attribute) ~map)
+        sexp (if-let [mapper (get bindings-map type)]
+               `(proto-obj (~mapper ~sexp))
+               sexp)
+        type-sym (vary-meta (gensym "val") assoc :tag (-> ^Class type .getName symbol))]
+    `(when-let [~type-sym ~sexp]
+       (. ~builder ~(symbol (.getName ^java.lang.reflect.Method (:writer attribute))) ~type-sym))))
+
+(defmethod build-attribute-from-map :repeated [map builder bindings-map {:keys [type] :as attribute}]
+  (let [sexp `(~(:keyword attribute) ~map)
+        sexp (if-let [mapper (get bindings-map type)]
+               `(map (comp proto-obj ~mapper) ~sexp)
+               sexp)]
+    `(. ~builder ~(symbol (.getName ^java.lang.reflect.Method (:writer attribute))) ~sexp)))
+
 ;; Magic
 
 (defn- build-reader [this attributes bindings-map]
@@ -154,21 +169,12 @@
      (make-writer [x# opts#]
        (clojure.java.io/make-writer (clojure.java.io/make-output-stream x# opts#) opts#))))
 
-(defn- build-from-map [map clazz attributes binding-map]
+(defn- build-from-map [map clazz attributes bindings-map]
   "Generate the reify from a map"
   (let [builder (gensym "builder")]
     `(let [~builder (. ~clazz ~'newBuilder)]
-       ~@(for [attribute attributes
-               :let [fn ^java.lang.reflect.Method (:writer attribute)
-                     type ^Class (:type attribute)
-                     fn-symbol (symbol (str "." (.getName fn)))
-                     sexp `(~(:keyword attribute) ~map)
-                     sexp (if-let [mapper (get binding-map type)]
-                            ((:reverse-mapping attribute) sexp mapper)
-                            sexp)
-                     type-sym (vary-meta (gensym "val") assoc :tag (-> type .getName symbol))]]
-           `(when-let [~type-sym ~sexp]
-              (~fn-symbol ~builder ~type-sym)))
+       ~@(for [attribute attributes]
+           (build-attribute-from-map map builder bindings-map attribute))
        (.build ~builder))))
 
 (defn- build-proto-definition [[clazz fn-name] bindings-map]
