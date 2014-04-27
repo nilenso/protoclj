@@ -8,14 +8,16 @@
   (proto-get [m k])
   (proto-get-raw [m k])
   (proto-keys [m])
-  (proto-obj [m]))
+  (proto-obj [m])
+  (mapify [m]))
 
 (extend-protocol ProtobufMap
   nil
   (proto-get [m k] nil)
   (proto-get-raw [m k] nil)
   (proto-keys [m] nil)
-  (proto-obj [m] nil))
+  (proto-obj [m] nil)
+  (mapify [m] nil))
 
 ;; String Munging
 
@@ -95,20 +97,33 @@
 
 ;; sexp generation
 
-(defmulti #^{:private true} fetch-from-proto #(:attribute-type %3))
+(defmulti #^{:private true} fetch-as-object #(:attribute-type %3))
 
-(defmethod fetch-from-proto :regular [this bindings-map attribute]
+(defmethod fetch-as-object :regular [this bindings-map attribute]
   (let [sexp `(. ~this ~(symbol (.getName ^java.lang.reflect.Method (:reader attribute))))]
     (if-let [mapper (get bindings-map (:type attribute))]
       `(~mapper ~sexp)
       sexp)))
 
-(defmethod fetch-from-proto :repeated [this bindings-map attribute]
+(defmethod fetch-as-object :repeated [this bindings-map attribute]
   (let [sexp `(. ~this ~(symbol (.getName ^java.lang.reflect.Method (:reader attribute))))]
     (if-let [mapper (get bindings-map (:type attribute))]
       `(vec (map ~mapper ~sexp))
       `(vec ~sexp))))
 
+(defmulti #^{:private true} fetch-as-primitive #(:attribute-type %3))
+
+(defmethod fetch-as-primitive :regular [this bindings-map attribute]
+  (let [sexp `(. ~this ~(symbol (.getName ^java.lang.reflect.Method (:reader attribute))))]
+    (if-let [mapper (get bindings-map (:type attribute))]
+      `(mapify (~mapper ~sexp))
+      sexp)))
+
+(defmethod fetch-as-primitive :repeated [this bindings-map attribute]
+  (let [sexp `(. ~this ~(symbol (.getName ^java.lang.reflect.Method (:reader attribute))))]
+    (if-let [mapper (get bindings-map (:type attribute))]
+      `(vec (map (comp mapify ~mapper) ~sexp))
+      `(vec ~sexp))))
 ;; Magic
 
 (defn- build-reader [this attributes bindings-map]
@@ -117,14 +132,17 @@
      ProtobufMap
      (proto-get [_# k#]
        (case k#
-         ~@(mapcat #(list (:keyword %) (fetch-from-proto this bindings-map %)) attributes)
+         ~@(mapcat #(list (:keyword %) (fetch-as-object this bindings-map %)) attributes)
          nil))
      (proto-get-raw [_# k#]
        (case k#
-         ~@(mapcat #(list (:keyword %) (fetch-from-proto this nil %)) attributes)
+         ~@(mapcat #(list (:keyword %) (fetch-as-object this nil %)) attributes)
          nil))
      (proto-keys [_#] ~(vec (map :keyword attributes)))
      (proto-obj [_#] ~this)
+     (mapify [a#]
+       (hash-map
+        ~@(mapcat #(list (:keyword %) (fetch-as-primitive this bindings-map %)) attributes)))
 
      clojure.java.io.IOFactory
      (make-input-stream [x# opts#]
@@ -191,21 +209,3 @@
        ~@(for [binding bindings]
            (build-proto-definition binding bindings-map))
        (def ~bindings-name {:protobuf-mappers ~bindings-map}))))
-
-;; This is the only place where some amount of runtime reflection happens.
-;; I really hope this is not slow
-(defn ->map [{:keys [protobuf-mappers] :as bindings-map} object]
-  "Turn a ProtoMap into a map"
-  (persistent!
-   (reduce (fn [map key]
-             (assoc! map key
-                     (let [result (proto-get-raw object key)]
-                       (if (instance? Iterable result)
-                         (if-let [mapping (protobuf-mappers (class (first result)))]
-                           (reduce #(conj %1 (->map bindings-map (mapping %2))) [] result)
-                           (vec result))
-                         (if-let [mapping (protobuf-mappers (class result))]
-                           (->map bindings-map (mapping result))
-                           result)))))
-           (transient {})
-           (proto-keys object))))

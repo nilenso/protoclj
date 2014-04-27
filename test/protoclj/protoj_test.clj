@@ -24,7 +24,7 @@
       (is (= proto-object (proto-obj kvp)))
 
       (testing "can be turned into a map"
-        (is (= {:key "foo" :value "bar"} (->map sample1 kvp))))))
+        (is (= {:key "foo" :value "bar"} (mapify kvp))))))
 
   (testing "can be parsed from a map"
     (let [kvp (key-value-pair {:key "foo" :value "bar"})]
@@ -46,7 +46,7 @@
       (is (= "bar" (proto-get (proto-get nested :kvp) :value)))
 
       (testing "can be turned into a map"
-        (is (= {:name "name" :kvp {:key "foo" :value "bar"}} (->map sample1 nested))))))
+        (is (= {:name "name" :kvp {:key "foo" :value "bar"}} (mapify nested))))))
 
   (testing "can be parsed from a map"
     (let [nested (nested-object {:name "name" :kvp {:key "foo" :value "bar"}})]
@@ -72,7 +72,7 @@
       (is (= "foo" (-> proto (proto-get :kvps) first (proto-get :key))))
 
       (testing "can be turned into a map"
-        (is (= {:messages ["foo"] :kvps [{:key "foo" :value "bar"}]} (->map sample1 proto))))))
+        (is (= {:messages ["foo"] :kvps [{:key "foo" :value "bar"}]} (mapify proto))))))
 
   (testing "it can be parsed from a map"
     (let [proto (repeated-object {:messages ["foo" "bar"] :kvps [{:key "foo" :value "bar"}]})]
