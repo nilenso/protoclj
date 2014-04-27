@@ -54,8 +54,7 @@
                        (.getName function)
                        (into-array Class [type]))
    :type type
-   :apply-mapping (fn [sexp mapper]   ;; These two could go into a multi-method
-                    `(~mapper ~sexp))
+   :attribute-type :regular
    :reverse-mapping (fn [sexp mapper]
                       `(proto-obj (~mapper ~sexp)))})
 
@@ -70,8 +69,7 @@
      :reader (.getMethod ^Class read-interface reader-name nil)
      :writer (.getMethod ^Class builder-clazz setter-name (into-array Class [Iterable]))
      :type type
-     :apply-mapping (fn [sexp mapper]
-                      `(vec (map ~mapper ~sexp)))
+     :attribute-type :repeated
      :reverse-mapping (fn [sexp mapper]
                         `(map (comp proto-obj ~mapper) ~sexp))}))
 
@@ -95,16 +93,21 @@
         (regular-attribute kw read-interface builder-clazz function type)
         (repeated-attribute kw read-interface builder-clazz (.getName function) type)))))
 
-(defn- fetch-from-proto [this bindings-map attribute]
-  "Returns a sexp that can fetch the key from the protobuf.
-  Pass in nil to bindings-map to circumvent nested translation"
-  (let [fn ^java.lang.reflect.Method (:reader attribute)
-        return-type ^Class (:type attribute)
-        sexp `(~(symbol (str "." (.getName fn))) ~this)
-        sexp (if-let [mapper (get bindings-map return-type)]
-               ((:apply-mapping attribute) sexp mapper)
-               sexp)]
-    sexp))
+;; sexp generation
+
+(defmulti #^{:private true} fetch-from-proto #(:attribute-type %3))
+
+(defmethod fetch-from-proto :regular [this bindings-map attribute]
+  (let [sexp `(. ~this ~(symbol (.getName ^java.lang.reflect.Method (:reader attribute))))]
+    (if-let [mapper (get bindings-map (:type attribute))]
+      `(~mapper ~sexp)
+      sexp)))
+
+(defmethod fetch-from-proto :repeated [this bindings-map attribute]
+  (let [sexp `(. ~this ~(symbol (.getName ^java.lang.reflect.Method (:reader attribute))))]
+    (if-let [mapper (get bindings-map (:type attribute))]
+      `(vec (map ~mapper ~sexp))
+      `(vec ~sexp))))
 
 ;; Magic
 
