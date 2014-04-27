@@ -3,14 +3,16 @@
             [clojure.test :refer :all])
   (:import [protoclj Sample1$KeyValuePair
                      Sample1$NestedObject
-                     Sample1$RepeatedObject]))
+                     Sample1$RepeatedObject
+                     Sample1$OptionalObject]))
 
 (set! *warn-on-reflection* true)
 
 (defprotos sample1
   key-value-pair  Sample1$KeyValuePair
   nested-object   Sample1$NestedObject
-  repeated-object Sample1$RepeatedObject)
+  repeated-object Sample1$RepeatedObject
+  optional-object Sample1$OptionalObject)
 
 (deftest very-simple-protobufs
   (testing "can be read from"
@@ -78,6 +80,16 @@
     (let [proto (repeated-object {:messages ["foo" "bar"] :kvps [{:key "foo" :value "bar"}]})]
       (is (= ["foo" "bar"] (proto-get proto :messages)))
       (is (= "foo" (-> proto (proto-get :kvps) first (proto-get :key)))))))
+
+(deftest a-protobuf-with-an-optional-object
+  (testing "nils out the field"
+    (let [proto-object (-> (Sample1$OptionalObject/newBuilder)
+                           .build)
+          proto (optional-object proto-object)]
+      (is (= nil (proto-get proto :text)))
+
+      (testing "can be turned into a map"
+        (is (= {:text nil} (mapify proto)))))))
 
 (deftest coersing-to-a-protobuf
   (let [proto-object (-> (Sample1$KeyValuePair/newBuilder)

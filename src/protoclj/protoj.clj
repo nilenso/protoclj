@@ -48,10 +48,13 @@
 
 (defn- regular-attribute [kw read-interface builder-clazz ^java.lang.reflect.Method function type]
   "Build a map representing a regular attribute"
-  {:keyword kw
+  {:name-kw kw
    :reader (.getMethod ^Class read-interface
                        (clojure.string/replace (.getName function) #"^set" "get")
                        nil)
+   :presence (.getMethod ^Class read-interface
+                         (clojure.string/replace (.getName function) #"^set" "has")
+                         nil)
    :writer (.getMethod ^Class builder-clazz
                        (.getName function)
                        (into-array Class [type]))
@@ -65,7 +68,7 @@
                         (str "List"))
         setter-name (-> single-setter-name
                         (clojure.string/replace #"set" "addAll"))]
-    {:keyword kw
+    {:name-kw kw
      :reader (.getMethod ^Class read-interface reader-name nil)
      :writer (.getMethod ^Class builder-clazz setter-name (into-array Class [Iterable]))
      :type type
@@ -95,45 +98,49 @@
 
 (defmulti #^{:private true} fetch-as-object #(:attribute-type %3))
 
-(defmethod fetch-as-object :regular [this bindings-map attribute]
-  (let [sexp `(. ~this ~(symbol (.getName ^java.lang.reflect.Method (:reader attribute))))]
-    (if-let [mapper (get bindings-map (:type attribute))]
-      `(~mapper ~sexp)
-      sexp)))
+(defmethod fetch-as-object :regular [this bindings-map {:keys [reader presence type]}]
+  (let [sexp `(. ~this ~(symbol (.getName ^java.lang.reflect.Method reader)))
+        sexp (if-let [mapper (get bindings-map type)]
+               `(~mapper ~sexp)
+               sexp)]
+    `(when (. ~this ~(symbol (.getName ^java.lang.reflect.Method presence)))
+       ~sexp)))
 
-(defmethod fetch-as-object :repeated [this bindings-map attribute]
-  (let [sexp `(. ~this ~(symbol (.getName ^java.lang.reflect.Method (:reader attribute))))]
-    (if-let [mapper (get bindings-map (:type attribute))]
+(defmethod fetch-as-object :repeated [this bindings-map {:keys [reader type]}]
+  (let [sexp `(. ~this ~(symbol (.getName ^java.lang.reflect.Method reader)))]
+    (if-let [mapper (get bindings-map type)]
       `(vec (map ~mapper ~sexp))
       `(vec ~sexp))))
 
 (defmulti #^{:private true} fetch-as-primitive #(:attribute-type %3))
 
-(defmethod fetch-as-primitive :regular [this bindings-map attribute]
-  (let [sexp `(. ~this ~(symbol (.getName ^java.lang.reflect.Method (:reader attribute))))]
-    (if-let [mapper (get bindings-map (:type attribute))]
-      `(mapify (~mapper ~sexp))
-      sexp)))
+(defmethod fetch-as-primitive :regular [this bindings-map {:keys [reader type presence]}]
+  (let [sexp `(. ~this ~(symbol (.getName ^java.lang.reflect.Method reader)))
+        sexp (if-let [mapper (get bindings-map type)]
+               `(mapify (~mapper ~sexp))
+               sexp)]
+    `(when (. ~this ~(symbol (.getName ^java.lang.reflect.Method presence)))
+       ~sexp)))
 
-(defmethod fetch-as-primitive :repeated [this bindings-map attribute]
-  (let [sexp `(. ~this ~(symbol (.getName ^java.lang.reflect.Method (:reader attribute))))]
-    (if-let [mapper (get bindings-map (:type attribute))]
+(defmethod fetch-as-primitive :repeated [this bindings-map {:keys [reader type]}]
+  (let [sexp `(. ~this ~(symbol (.getName ^java.lang.reflect.Method reader)))]
+    (if-let [mapper (get bindings-map type)]
       `(vec (map (comp mapify ~mapper) ~sexp))
       `(vec ~sexp))))
 
 (defmulti #^{:private true} build-attribute-from-map #(:attribute-type %4))
 
-(defmethod build-attribute-from-map :regular [map builder bindings-map {:keys [type] :as attribute}]
-  (let [sexp `(~(:keyword attribute) ~map)
+(defmethod build-attribute-from-map :regular [map builder bindings-map {:keys [type writer name-kw] :as attribute}]
+  (let [sexp `(~name-kw ~map)
         sexp (if-let [mapper (get bindings-map type)]
                `(proto-obj (~mapper ~sexp))
                sexp)
         type-sym (vary-meta (gensym "val") assoc :tag (-> ^Class type .getName symbol))]
     `(when-let [~type-sym ~sexp]
-       (. ~builder ~(symbol (.getName ^java.lang.reflect.Method (:writer attribute))) ~type-sym))))
+       (. ~builder ~(symbol (.getName ^java.lang.reflect.Method writer)) ~type-sym))))
 
-(defmethod build-attribute-from-map :repeated [map builder bindings-map {:keys [type] :as attribute}]
-  (let [sexp `(~(:keyword attribute) ~map)
+(defmethod build-attribute-from-map :repeated [map builder bindings-map {:keys [type name-kw] :as attribute}]
+  (let [sexp `(~name-kw ~map)
         sexp (if-let [mapper (get bindings-map type)]
                `(map (comp proto-obj ~mapper) ~sexp)
                sexp)]
@@ -147,17 +154,17 @@
      ProtobufMap
      (proto-get [_# k#]
        (case k#
-         ~@(mapcat #(list (:keyword %) (fetch-as-object this bindings-map %)) attributes)
+         ~@(mapcat #(list (:name-kw %) (fetch-as-object this bindings-map %)) attributes)
          nil))
      (proto-get-raw [_# k#]
        (case k#
-         ~@(mapcat #(list (:keyword %) (fetch-as-object this nil %)) attributes)
+         ~@(mapcat #(list (:name-kw %) (fetch-as-object this nil %)) attributes)
          nil))
-     (proto-keys [_#] ~(vec (map :keyword attributes)))
+     (proto-keys [_#] ~(vec (map :name-kw attributes)))
      (proto-obj [_#] ~this)
      (mapify [a#]
        (hash-map
-        ~@(mapcat #(list (:keyword %) (fetch-as-primitive this bindings-map %)) attributes)))
+        ~@(mapcat #(list (:name-kw %) (fetch-as-primitive this bindings-map %)) attributes)))
 
      clojure.java.io.IOFactory
      (make-input-stream [x# opts#]
