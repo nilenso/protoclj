@@ -2,8 +2,9 @@
   (:import [com.google.protobuf GeneratedMessage$Builder ByteString]
            [java.lang Iterable]))
 
-(defn- keywordize-fn [^java.lang.reflect.Method fn]
+(defn- keywordize-fn
   "Returns a keyword name from a function getFooBar -> :foo-bar"
+  [^java.lang.reflect.Method fn]
   (->> fn
        .getName
        (map #(if (Character/isUpperCase ^Character %)
@@ -13,13 +14,15 @@
        (#(clojure.string/replace % #"^get-|^set-" ""))
        keyword))
 
-(defn- internal-setter? [^Class type]
+(defn- internal-setter?
   "Check if the given class is part of an internal function"
+  [^Class type]
   (or (= ByteString type)
       (= GeneratedMessage$Builder (.getSuperclass type))))
 
-(defn- regular-attribute [kw read-interface builder-clazz ^java.lang.reflect.Method function type]
+(defn- regular-attribute
   "Build a map representing a regular attribute"
+  [kw read-interface builder-clazz ^java.lang.reflect.Method function type]
   {:name-kw kw
    :reader (.getMethod ^Class read-interface
                        (clojure.string/replace (.getName function) #"^set" "get")
@@ -33,8 +36,9 @@
    :type type
    :attribute-type :regular})
 
-(defn- repeated-attribute [kw read-interface builder-clazz single-setter-name type]
+(defn- repeated-attribute
   "Build a map representing a repeated attribute"
+  [kw read-interface builder-clazz single-setter-name type]
   (let [reader-name (-> single-setter-name
                         (clojure.string/replace #"set" "get")
                         (str "List"))
@@ -46,9 +50,11 @@
      :type type
      :attribute-type :repeated}))
 
-(defn  proto-attributes [clazz-sym]
+(defn  proto-attributes
   "Get a list of interesting attributes for the class.
-  Currently done by seeing all setters. If it accepts 2 args, it's a repeated attr."
+  Currently done by seeing all setters.
+  If it accepts 2 args, it's a repeated attr."
+  [clazz-sym]
   (let [clazz ^Class (eval clazz-sym)
         read-interface ^Class
         (->> clazz

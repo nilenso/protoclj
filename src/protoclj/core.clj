@@ -18,15 +18,9 @@
   (proto-obj [m] nil)
   (mapify [m] nil))
 
-(defn- protocol-name [^Class class]
-  "Random name for a protocol representing the class builder"
-  (-> class
-      .getName
-      (clojure.string/replace #"[^a-zA-Z1-9]" "-")
-      gensym))
-
-(defn- build-reader [this attributes bindings-map]
+(defn- build-reader
   "The main reify that can get different params"
+  [this attributes bindings-map]
   `(reify
      ProtobufMap
      (proto-get [_# k#]
@@ -53,11 +47,12 @@
      (make-writer [x# opts#]
        (clojure.java.io/make-writer (clojure.java.io/make-output-stream x# opts#) opts#))))
 
-(defn- build-proto-definition [[clazz fn-name] bindings-map]
+(defn- build-proto-definition
   "Returns a sexp for defining the proto"
+  [[clazz fn-name] bindings-map]
   (let [this (vary-meta (gensym "this") assoc :tag clazz)
         attributes (reflection/proto-attributes clazz)
-        protocol-name (-> clazz eval protocol-name)
+        protocol-name (-> ^Class (eval clazz) .getName (clojure.string/replace #"[^a-zA-Z1-9]" "-") gensym)
         byte-array-type (-> 0 byte-array class .getName symbol)
         byte-array-symbol (vary-meta (gensym "stream") assoc :tag byte-array-type)
         map-sym (gensym "map")]
@@ -80,8 +75,9 @@
          clojure.lang.IPersistentMap
          (~fn-name [~map-sym] (~fn-name ~(sexp/build-from-map map-sym clazz attributes bindings-map)))))))
 
-(defmacro defprotos [bindings-name & bindings-seq]
+(defmacro defprotos
   "Public macro. See tests for usage"
+  [bindings-name & bindings-seq]
   (let [bindings (->> bindings-seq
                       (partition-all 2)
                       (map reverse)
