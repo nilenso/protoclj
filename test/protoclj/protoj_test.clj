@@ -1,5 +1,5 @@
 (ns protoclj.protoj-test
-  (:require [protoclj.protoj :refer :all]
+  (:require [protoclj.core :refer :all]
             [clojure.test :refer :all])
   (:import [protoclj Sample1$KeyValuePair
                      Sample1$NestedObject
