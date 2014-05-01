@@ -122,14 +122,14 @@
                            (.setTheEnum Sample1$EnumObject$TheEnum/FIRST)
                            .build)
           proto (enum-object proto-object)]
-      (is (= :FIRST (-> proto (proto-get :the-enum) mapify)))
+      (is (= :FIRST (-> proto (proto-get :the-enum) proto-val)))
 
       (testing "can be turned into a map"
         (is (= {:the-enum :FIRST} (mapify proto))))))
 
   (testing "it can be parsed from a map"
     (let [proto (enum-object {:the-enum :FIRST})]
-      (is (= :FIRST (-> proto (proto-get :the-enum) mapify))))))
+      (is (= :FIRST (-> proto (proto-get :the-enum) proto-val))))))
 
 (deftest coersing-to-a-protobuf
   (let [proto-object (-> (Sample1$KeyValuePair/newBuilder)

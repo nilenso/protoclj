@@ -7,27 +7,32 @@
   (proto-obj [m])
   (mapify [m]))
 
-(defprotocol ProtobufMap
+(defprotocol ProtobufMessage
   (proto-get [m k])
   (proto-get-raw [m k])
   (proto-keys [m]))
 
-(extend-protocol ProtobufElement
-  nil
-  (proto-obj [m] nil)
-  (mapify [m] nil))
+(defprotocol ProtobufEnum
+  (proto-val [m]))
 
-(extend-protocol ProtobufMap
-  nil
+(extend-type nil
+  ProtobufElement
+  (proto-obj [m] nil)
+  (mapify [m] nil)
+
+  ProtobufMessage
   (proto-get [m k] nil)
   (proto-get-raw [m k] nil)
-  (proto-keys [m] nil))
+  (proto-keys [m] nil)
+
+  ProtobufEnum
+  (proto-val [m] nil))
 
 (defn- build-reader
   "The main reify that can get different params"
   [this attributes bindings-map]
   `(reify
-     ProtobufMap
+     ProtobufMessage
      (proto-get [_# k#]
        (case k#
          ~@(mapcat #(list (:name-kw %) (sexp/fetch-as-object this bindings-map %)) attributes)
@@ -88,13 +93,16 @@
        ~clazz
        (~fn-name [~this]
          (reify
+           ProtobufEnum
+           (proto-val [_#] (case (.name ~this)
+                             ~@(mapcat
+                                #(let [val-name (.name ^Enum %)]
+                                   [val-name (keyword val-name)]) values)
+                             nil))
+
            ProtobufElement
            (proto-obj [_#] ~this)
-           (mapify [_#] (case (.name ~this)
-                          ~@(mapcat
-                             #(let [val-name (.name ^Enum %)]
-                                [val-name (keyword val-name)]) values)
-                          nil))))
+           (mapify [o#] (proto-val o#))))
 
        clojure.lang.Keyword
        (~fn-name [kw#]
