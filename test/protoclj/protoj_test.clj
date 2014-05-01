@@ -8,7 +8,9 @@
             Sample1$RepeatedObject
             Sample1$OptionalObject
             Sample1$EmbeddedObject
-            Sample1$EmbeddedObject$AnonymousObject]))
+            Sample1$EmbeddedObject$AnonymousObject
+            Sample1$EnumObject
+            Sample1$EnumObject$TheEnum]))
 
 (set! *warn-on-reflection* true)
 
@@ -17,7 +19,8 @@
   nested-object   Sample1$NestedObject
   repeated-object Sample1$RepeatedObject
   optional-object Sample1$OptionalObject
-  embedded-object Sample1$EmbeddedObject)
+  embedded-object Sample1$EmbeddedObject
+  enum-object     Sample1$EnumObject)
 
 (deftest very-simple-protobufs
   (testing "can be read from"
@@ -108,6 +111,17 @@
 
       (testing "can be turned into a map"
         (is (= {:obj {:text "foo"}} (mapify proto)))))))
+
+(deftest a-protobuf-with-an-enum
+  (testing "can be read from"
+    (let [proto-object (-> (Sample1$EnumObject/newBuilder)
+                           (.setTheEnum Sample1$EnumObject$TheEnum/FIRST)
+                           .build)
+          proto (enum-object proto-object)]
+      (is (= :FIRST (-> proto (proto-get :the-enum) mapify)))
+
+      (testing "can be turned into a map"
+        (is (= {:the-enum :FIRST} (mapify proto)))))))
 
 (deftest coersing-to-a-protobuf
   (let [proto-object (-> (Sample1$KeyValuePair/newBuilder)

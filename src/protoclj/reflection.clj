@@ -96,9 +96,14 @@
                                {} named-bindings-seq)
         classes (->> root-clazz
                      eval
-                     iterate-inner-classes
-                     (filter #(= GeneratedMessage (.getSuperclass ^Class %)))
-                     (map #(symbol (.getName ^Class %))))]
-    (reduce #(assoc %1 %2
-                    {:fn-name (get named-bindings %2 (anonymous-symbol %2))
-                     :protocol-name (anonymous-protocol %2)}) {} classes)))
+                     iterate-inner-classes)]
+
+    (for [^Class clazz classes
+          :let [enum? (.isEnum clazz)
+                message? (= GeneratedMessage (.getSuperclass clazz))]
+          :when (or message? enum?)
+          :let [class-sym (symbol (.getName clazz))]]
+      {:name class-sym
+       :fn-name (get named-bindings class-sym (anonymous-symbol class-sym))
+       :protocol-name (anonymous-protocol class-sym)
+       :type (if enum? :enum :message)})))

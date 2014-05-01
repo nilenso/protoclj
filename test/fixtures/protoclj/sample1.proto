@@ -27,3 +27,14 @@ message EmbeddedObject {
     }
     required AnonymousObject obj = 1;
 }
+
+message EnumObject {
+    enum TheEnum {
+        option allow_alias = true;
+        FIRST       = 1;
+        FIRST_ALIAS = 1;
+        SECOND      = 2;
+    }
+
+    required TheEnum the_enum = 1;
+}
