@@ -98,11 +98,11 @@
 
        clojure.lang.Keyword
        (~fn-name [kw#]
-         ~fn-name (case kw#
-                    ~@(mapcat
-                       #(let [val-name (.name ^Enum %)]
-                          [(keyword val-name) (symbol (name clazz) val-name)]) values)
-                    nil)))))
+         (~fn-name (case kw#
+                     ~@(mapcat
+                        #(let [val-name (.name ^Enum %)]
+                           [(keyword val-name) (symbol (name clazz) val-name)]) values)
+                     nil))))))
 
 (defmacro defprotos
   "Public macro. See tests for usage"

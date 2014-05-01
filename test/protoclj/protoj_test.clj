@@ -110,7 +110,11 @@
       (is (= "foo" (-> proto (proto-get :obj) (proto-get :text))))
 
       (testing "can be turned into a map"
-        (is (= {:obj {:text "foo"}} (mapify proto)))))))
+        (is (= {:obj {:text "foo"}} (mapify proto))))))
+
+  (testing "it can be parsed from a map"
+    (let [proto (embedded-object {:obj {:text "foo"}})]
+      (is (= "foo" (-> proto (proto-get :obj) (proto-get :text)))))))
 
 (deftest a-protobuf-with-an-enum
   (testing "can be read from"
@@ -121,7 +125,11 @@
       (is (= :FIRST (-> proto (proto-get :the-enum) mapify)))
 
       (testing "can be turned into a map"
-        (is (= {:the-enum :FIRST} (mapify proto)))))))
+        (is (= {:the-enum :FIRST} (mapify proto))))))
+
+  (testing "it can be parsed from a map"
+    (let [proto (enum-object {:the-enum :FIRST})]
+      (is (= :FIRST (-> proto (proto-get :the-enum) mapify))))))
 
 (deftest coersing-to-a-protobuf
   (let [proto-object (-> (Sample1$KeyValuePair/newBuilder)
