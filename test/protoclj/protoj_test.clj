@@ -1,18 +1,23 @@
 (ns protoclj.protoj-test
   (:require [protoclj.core :refer :all]
             [clojure.test :refer :all])
-  (:import [protoclj Sample1$KeyValuePair
-                     Sample1$NestedObject
-                     Sample1$RepeatedObject
-                     Sample1$OptionalObject]))
+  (:import [protoclj
+            Sample1
+            Sample1$KeyValuePair
+            Sample1$NestedObject
+            Sample1$RepeatedObject
+            Sample1$OptionalObject
+            Sample1$EmbeddedObject
+            Sample1$EmbeddedObject$AnonymousObject]))
 
 (set! *warn-on-reflection* true)
 
-(defprotos sample1
+(defprotos sample1 Sample1
   key-value-pair  Sample1$KeyValuePair
   nested-object   Sample1$NestedObject
   repeated-object Sample1$RepeatedObject
-  optional-object Sample1$OptionalObject)
+  optional-object Sample1$OptionalObject
+  embedded-object Sample1$EmbeddedObject)
 
 (deftest very-simple-protobufs
   (testing "can be read from"
@@ -90,6 +95,19 @@
 
       (testing "can be turned into a map"
         (is (= {:text nil} (mapify proto)))))))
+
+(deftest a-protobuf-with-an-embedded-message
+  (testing "can be read from"
+    (let [proto-object (-> (Sample1$EmbeddedObject/newBuilder)
+                           (.setObj (-> (Sample1$EmbeddedObject$AnonymousObject/newBuilder)
+                                        (.setText "foo")
+                                        .build))
+                           .build)
+          proto (embedded-object proto-object)]
+      (is (= "foo" (-> proto (proto-get :obj) (proto-get :text))))
+
+      (testing "can be turned into a map"
+        (is (= {:obj {:text "foo"}} (mapify proto)))))))
 
 (deftest coersing-to-a-protobuf
   (let [proto-object (-> (Sample1$KeyValuePair/newBuilder)

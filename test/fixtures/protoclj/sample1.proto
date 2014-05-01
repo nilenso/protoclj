@@ -20,3 +20,10 @@ message RepeatedObject {
 message OptionalObject {
     optional string text       = 1;
 }
+
+message EmbeddedObject {
+    message AnonymousObject {
+        required string text     = 1;
+    }
+    required AnonymousObject obj = 1;
+}

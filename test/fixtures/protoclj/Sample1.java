@@ -2680,6 +2680,1008 @@ public final class Sample1 {
     // @@protoc_insertion_point(class_scope:protoclj_sample.OptionalObject)
   }
 
+  public interface EmbeddedObjectOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // required .protoclj_sample.EmbeddedObject.AnonymousObject obj = 1;
+    /**
+     * <code>required .protoclj_sample.EmbeddedObject.AnonymousObject obj = 1;</code>
+     */
+    boolean hasObj();
+    /**
+     * <code>required .protoclj_sample.EmbeddedObject.AnonymousObject obj = 1;</code>
+     */
+    protoclj.Sample1.EmbeddedObject.AnonymousObject getObj();
+    /**
+     * <code>required .protoclj_sample.EmbeddedObject.AnonymousObject obj = 1;</code>
+     */
+    protoclj.Sample1.EmbeddedObject.AnonymousObjectOrBuilder getObjOrBuilder();
+  }
+  /**
+   * Protobuf type {@code protoclj_sample.EmbeddedObject}
+   */
+  public static final class EmbeddedObject extends
+      com.google.protobuf.GeneratedMessage
+      implements EmbeddedObjectOrBuilder {
+    // Use EmbeddedObject.newBuilder() to construct.
+    private EmbeddedObject(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private EmbeddedObject(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final EmbeddedObject defaultInstance;
+    public static EmbeddedObject getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public EmbeddedObject getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private EmbeddedObject(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              protoclj.Sample1.EmbeddedObject.AnonymousObject.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                subBuilder = obj_.toBuilder();
+              }
+              obj_ = input.readMessage(protoclj.Sample1.EmbeddedObject.AnonymousObject.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(obj_);
+                obj_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000001;
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return protoclj.Sample1.internal_static_protoclj_sample_EmbeddedObject_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return protoclj.Sample1.internal_static_protoclj_sample_EmbeddedObject_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              protoclj.Sample1.EmbeddedObject.class, protoclj.Sample1.EmbeddedObject.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<EmbeddedObject> PARSER =
+        new com.google.protobuf.AbstractParser<EmbeddedObject>() {
+      public EmbeddedObject parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new EmbeddedObject(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<EmbeddedObject> getParserForType() {
+      return PARSER;
+    }
+
+    public interface AnonymousObjectOrBuilder
+        extends com.google.protobuf.MessageOrBuilder {
+
+      // required string text = 1;
+      /**
+       * <code>required string text = 1;</code>
+       */
+      boolean hasText();
+      /**
+       * <code>required string text = 1;</code>
+       */
+      java.lang.String getText();
+      /**
+       * <code>required string text = 1;</code>
+       */
+      com.google.protobuf.ByteString
+          getTextBytes();
+    }
+    /**
+     * Protobuf type {@code protoclj_sample.EmbeddedObject.AnonymousObject}
+     */
+    public static final class AnonymousObject extends
+        com.google.protobuf.GeneratedMessage
+        implements AnonymousObjectOrBuilder {
+      // Use AnonymousObject.newBuilder() to construct.
+      private AnonymousObject(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+        super(builder);
+        this.unknownFields = builder.getUnknownFields();
+      }
+      private AnonymousObject(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+      private static final AnonymousObject defaultInstance;
+      public static AnonymousObject getDefaultInstance() {
+        return defaultInstance;
+      }
+
+      public AnonymousObject getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+
+      private final com.google.protobuf.UnknownFieldSet unknownFields;
+      @java.lang.Override
+      public final com.google.protobuf.UnknownFieldSet
+          getUnknownFields() {
+        return this.unknownFields;
+      }
+      private AnonymousObject(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        initFields();
+        int mutable_bitField0_ = 0;
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder();
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+              case 10: {
+                bitField0_ |= 0x00000001;
+                text_ = input.readBytes();
+                break;
+              }
+            }
+          }
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(this);
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(
+              e.getMessage()).setUnfinishedMessage(this);
+        } finally {
+          this.unknownFields = unknownFields.build();
+          makeExtensionsImmutable();
+        }
+      }
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return protoclj.Sample1.internal_static_protoclj_sample_EmbeddedObject_AnonymousObject_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return protoclj.Sample1.internal_static_protoclj_sample_EmbeddedObject_AnonymousObject_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                protoclj.Sample1.EmbeddedObject.AnonymousObject.class, protoclj.Sample1.EmbeddedObject.AnonymousObject.Builder.class);
+      }
+
+      public static com.google.protobuf.Parser<AnonymousObject> PARSER =
+          new com.google.protobuf.AbstractParser<AnonymousObject>() {
+        public AnonymousObject parsePartialFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          return new AnonymousObject(input, extensionRegistry);
+        }
+      };
+
+      @java.lang.Override
+      public com.google.protobuf.Parser<AnonymousObject> getParserForType() {
+        return PARSER;
+      }
+
+      private int bitField0_;
+      // required string text = 1;
+      public static final int TEXT_FIELD_NUMBER = 1;
+      private java.lang.Object text_;
+      /**
+       * <code>required string text = 1;</code>
+       */
+      public boolean hasText() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required string text = 1;</code>
+       */
+      public java.lang.String getText() {
+        java.lang.Object ref = text_;
+        if (ref instanceof java.lang.String) {
+          return (java.lang.String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            text_ = s;
+          }
+          return s;
+        }
+      }
+      /**
+       * <code>required string text = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getTextBytes() {
+        java.lang.Object ref = text_;
+        if (ref instanceof java.lang.String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          text_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+
+      private void initFields() {
+        text_ = "";
+      }
+      private byte memoizedIsInitialized = -1;
+      public final boolean isInitialized() {
+        byte isInitialized = memoizedIsInitialized;
+        if (isInitialized != -1) return isInitialized == 1;
+
+        if (!hasText()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+        memoizedIsInitialized = 1;
+        return true;
+      }
+
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          output.writeBytes(1, getTextBytes());
+        }
+        getUnknownFields().writeTo(output);
+      }
+
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+
+        size = 0;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeBytesSize(1, getTextBytes());
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+
+      private static final long serialVersionUID = 0L;
+      @java.lang.Override
+      protected java.lang.Object writeReplace()
+          throws java.io.ObjectStreamException {
+        return super.writeReplace();
+      }
+
+      public static protoclj.Sample1.EmbeddedObject.AnonymousObject parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static protoclj.Sample1.EmbeddedObject.AnonymousObject parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static protoclj.Sample1.EmbeddedObject.AnonymousObject parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data);
+      }
+      public static protoclj.Sample1.EmbeddedObject.AnonymousObject parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return PARSER.parseFrom(data, extensionRegistry);
+      }
+      public static protoclj.Sample1.EmbeddedObject.AnonymousObject parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static protoclj.Sample1.EmbeddedObject.AnonymousObject parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+      public static protoclj.Sample1.EmbeddedObject.AnonymousObject parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input);
+      }
+      public static protoclj.Sample1.EmbeddedObject.AnonymousObject parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      }
+      public static protoclj.Sample1.EmbeddedObject.AnonymousObject parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input);
+      }
+      public static protoclj.Sample1.EmbeddedObject.AnonymousObject parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return PARSER.parseFrom(input, extensionRegistry);
+      }
+
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(protoclj.Sample1.EmbeddedObject.AnonymousObject prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+
+      @java.lang.Override
+      protected Builder newBuilderForType(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        Builder builder = new Builder(parent);
+        return builder;
+      }
+      /**
+       * Protobuf type {@code protoclj_sample.EmbeddedObject.AnonymousObject}
+       */
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder>
+         implements protoclj.Sample1.EmbeddedObject.AnonymousObjectOrBuilder {
+        public static final com.google.protobuf.Descriptors.Descriptor
+            getDescriptor() {
+          return protoclj.Sample1.internal_static_protoclj_sample_EmbeddedObject_AnonymousObject_descriptor;
+        }
+
+        protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+            internalGetFieldAccessorTable() {
+          return protoclj.Sample1.internal_static_protoclj_sample_EmbeddedObject_AnonymousObject_fieldAccessorTable
+              .ensureFieldAccessorsInitialized(
+                  protoclj.Sample1.EmbeddedObject.AnonymousObject.class, protoclj.Sample1.EmbeddedObject.AnonymousObject.Builder.class);
+        }
+
+        // Construct using protoclj.Sample1.EmbeddedObject.AnonymousObject.newBuilder()
+        private Builder() {
+          maybeForceBuilderInitialization();
+        }
+
+        private Builder(
+            com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          super(parent);
+          maybeForceBuilderInitialization();
+        }
+        private void maybeForceBuilderInitialization() {
+          if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          }
+        }
+        private static Builder create() {
+          return new Builder();
+        }
+
+        public Builder clear() {
+          super.clear();
+          text_ = "";
+          bitField0_ = (bitField0_ & ~0x00000001);
+          return this;
+        }
+
+        public Builder clone() {
+          return create().mergeFrom(buildPartial());
+        }
+
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return protoclj.Sample1.internal_static_protoclj_sample_EmbeddedObject_AnonymousObject_descriptor;
+        }
+
+        public protoclj.Sample1.EmbeddedObject.AnonymousObject getDefaultInstanceForType() {
+          return protoclj.Sample1.EmbeddedObject.AnonymousObject.getDefaultInstance();
+        }
+
+        public protoclj.Sample1.EmbeddedObject.AnonymousObject build() {
+          protoclj.Sample1.EmbeddedObject.AnonymousObject result = buildPartial();
+          if (!result.isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return result;
+        }
+
+        public protoclj.Sample1.EmbeddedObject.AnonymousObject buildPartial() {
+          protoclj.Sample1.EmbeddedObject.AnonymousObject result = new protoclj.Sample1.EmbeddedObject.AnonymousObject(this);
+          int from_bitField0_ = bitField0_;
+          int to_bitField0_ = 0;
+          if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+            to_bitField0_ |= 0x00000001;
+          }
+          result.text_ = text_;
+          result.bitField0_ = to_bitField0_;
+          onBuilt();
+          return result;
+        }
+
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof protoclj.Sample1.EmbeddedObject.AnonymousObject) {
+            return mergeFrom((protoclj.Sample1.EmbeddedObject.AnonymousObject)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+
+        public Builder mergeFrom(protoclj.Sample1.EmbeddedObject.AnonymousObject other) {
+          if (other == protoclj.Sample1.EmbeddedObject.AnonymousObject.getDefaultInstance()) return this;
+          if (other.hasText()) {
+            bitField0_ |= 0x00000001;
+            text_ = other.text_;
+            onChanged();
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+
+        public final boolean isInitialized() {
+          if (!hasText()) {
+            
+            return false;
+          }
+          return true;
+        }
+
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          protoclj.Sample1.EmbeddedObject.AnonymousObject parsedMessage = null;
+          try {
+            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            parsedMessage = (protoclj.Sample1.EmbeddedObject.AnonymousObject) e.getUnfinishedMessage();
+            throw e;
+          } finally {
+            if (parsedMessage != null) {
+              mergeFrom(parsedMessage);
+            }
+          }
+          return this;
+        }
+        private int bitField0_;
+
+        // required string text = 1;
+        private java.lang.Object text_ = "";
+        /**
+         * <code>required string text = 1;</code>
+         */
+        public boolean hasText() {
+          return ((bitField0_ & 0x00000001) == 0x00000001);
+        }
+        /**
+         * <code>required string text = 1;</code>
+         */
+        public java.lang.String getText() {
+          java.lang.Object ref = text_;
+          if (!(ref instanceof java.lang.String)) {
+            java.lang.String s = ((com.google.protobuf.ByteString) ref)
+                .toStringUtf8();
+            text_ = s;
+            return s;
+          } else {
+            return (java.lang.String) ref;
+          }
+        }
+        /**
+         * <code>required string text = 1;</code>
+         */
+        public com.google.protobuf.ByteString
+            getTextBytes() {
+          java.lang.Object ref = text_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b = 
+                com.google.protobuf.ByteString.copyFromUtf8(
+                    (java.lang.String) ref);
+            text_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+        /**
+         * <code>required string text = 1;</code>
+         */
+        public Builder setText(
+            java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+          text_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required string text = 1;</code>
+         */
+        public Builder clearText() {
+          bitField0_ = (bitField0_ & ~0x00000001);
+          text_ = getDefaultInstance().getText();
+          onChanged();
+          return this;
+        }
+        /**
+         * <code>required string text = 1;</code>
+         */
+        public Builder setTextBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+          text_ = value;
+          onChanged();
+          return this;
+        }
+
+        // @@protoc_insertion_point(builder_scope:protoclj_sample.EmbeddedObject.AnonymousObject)
+      }
+
+      static {
+        defaultInstance = new AnonymousObject(true);
+        defaultInstance.initFields();
+      }
+
+      // @@protoc_insertion_point(class_scope:protoclj_sample.EmbeddedObject.AnonymousObject)
+    }
+
+    private int bitField0_;
+    // required .protoclj_sample.EmbeddedObject.AnonymousObject obj = 1;
+    public static final int OBJ_FIELD_NUMBER = 1;
+    private protoclj.Sample1.EmbeddedObject.AnonymousObject obj_;
+    /**
+     * <code>required .protoclj_sample.EmbeddedObject.AnonymousObject obj = 1;</code>
+     */
+    public boolean hasObj() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required .protoclj_sample.EmbeddedObject.AnonymousObject obj = 1;</code>
+     */
+    public protoclj.Sample1.EmbeddedObject.AnonymousObject getObj() {
+      return obj_;
+    }
+    /**
+     * <code>required .protoclj_sample.EmbeddedObject.AnonymousObject obj = 1;</code>
+     */
+    public protoclj.Sample1.EmbeddedObject.AnonymousObjectOrBuilder getObjOrBuilder() {
+      return obj_;
+    }
+
+    private void initFields() {
+      obj_ = protoclj.Sample1.EmbeddedObject.AnonymousObject.getDefaultInstance();
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      if (!hasObj()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!getObj().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeMessage(1, obj_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, obj_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static protoclj.Sample1.EmbeddedObject parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static protoclj.Sample1.EmbeddedObject parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static protoclj.Sample1.EmbeddedObject parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static protoclj.Sample1.EmbeddedObject parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static protoclj.Sample1.EmbeddedObject parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static protoclj.Sample1.EmbeddedObject parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static protoclj.Sample1.EmbeddedObject parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static protoclj.Sample1.EmbeddedObject parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static protoclj.Sample1.EmbeddedObject parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static protoclj.Sample1.EmbeddedObject parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(protoclj.Sample1.EmbeddedObject prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code protoclj_sample.EmbeddedObject}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements protoclj.Sample1.EmbeddedObjectOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return protoclj.Sample1.internal_static_protoclj_sample_EmbeddedObject_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return protoclj.Sample1.internal_static_protoclj_sample_EmbeddedObject_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                protoclj.Sample1.EmbeddedObject.class, protoclj.Sample1.EmbeddedObject.Builder.class);
+      }
+
+      // Construct using protoclj.Sample1.EmbeddedObject.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+          getObjFieldBuilder();
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        if (objBuilder_ == null) {
+          obj_ = protoclj.Sample1.EmbeddedObject.AnonymousObject.getDefaultInstance();
+        } else {
+          objBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return protoclj.Sample1.internal_static_protoclj_sample_EmbeddedObject_descriptor;
+      }
+
+      public protoclj.Sample1.EmbeddedObject getDefaultInstanceForType() {
+        return protoclj.Sample1.EmbeddedObject.getDefaultInstance();
+      }
+
+      public protoclj.Sample1.EmbeddedObject build() {
+        protoclj.Sample1.EmbeddedObject result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public protoclj.Sample1.EmbeddedObject buildPartial() {
+        protoclj.Sample1.EmbeddedObject result = new protoclj.Sample1.EmbeddedObject(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        if (objBuilder_ == null) {
+          result.obj_ = obj_;
+        } else {
+          result.obj_ = objBuilder_.build();
+        }
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof protoclj.Sample1.EmbeddedObject) {
+          return mergeFrom((protoclj.Sample1.EmbeddedObject)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(protoclj.Sample1.EmbeddedObject other) {
+        if (other == protoclj.Sample1.EmbeddedObject.getDefaultInstance()) return this;
+        if (other.hasObj()) {
+          mergeObj(other.getObj());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasObj()) {
+          
+          return false;
+        }
+        if (!getObj().isInitialized()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        protoclj.Sample1.EmbeddedObject parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (protoclj.Sample1.EmbeddedObject) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // required .protoclj_sample.EmbeddedObject.AnonymousObject obj = 1;
+      private protoclj.Sample1.EmbeddedObject.AnonymousObject obj_ = protoclj.Sample1.EmbeddedObject.AnonymousObject.getDefaultInstance();
+      private com.google.protobuf.SingleFieldBuilder<
+          protoclj.Sample1.EmbeddedObject.AnonymousObject, protoclj.Sample1.EmbeddedObject.AnonymousObject.Builder, protoclj.Sample1.EmbeddedObject.AnonymousObjectOrBuilder> objBuilder_;
+      /**
+       * <code>required .protoclj_sample.EmbeddedObject.AnonymousObject obj = 1;</code>
+       */
+      public boolean hasObj() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required .protoclj_sample.EmbeddedObject.AnonymousObject obj = 1;</code>
+       */
+      public protoclj.Sample1.EmbeddedObject.AnonymousObject getObj() {
+        if (objBuilder_ == null) {
+          return obj_;
+        } else {
+          return objBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>required .protoclj_sample.EmbeddedObject.AnonymousObject obj = 1;</code>
+       */
+      public Builder setObj(protoclj.Sample1.EmbeddedObject.AnonymousObject value) {
+        if (objBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          obj_ = value;
+          onChanged();
+        } else {
+          objBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .protoclj_sample.EmbeddedObject.AnonymousObject obj = 1;</code>
+       */
+      public Builder setObj(
+          protoclj.Sample1.EmbeddedObject.AnonymousObject.Builder builderForValue) {
+        if (objBuilder_ == null) {
+          obj_ = builderForValue.build();
+          onChanged();
+        } else {
+          objBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .protoclj_sample.EmbeddedObject.AnonymousObject obj = 1;</code>
+       */
+      public Builder mergeObj(protoclj.Sample1.EmbeddedObject.AnonymousObject value) {
+        if (objBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) == 0x00000001) &&
+              obj_ != protoclj.Sample1.EmbeddedObject.AnonymousObject.getDefaultInstance()) {
+            obj_ =
+              protoclj.Sample1.EmbeddedObject.AnonymousObject.newBuilder(obj_).mergeFrom(value).buildPartial();
+          } else {
+            obj_ = value;
+          }
+          onChanged();
+        } else {
+          objBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000001;
+        return this;
+      }
+      /**
+       * <code>required .protoclj_sample.EmbeddedObject.AnonymousObject obj = 1;</code>
+       */
+      public Builder clearObj() {
+        if (objBuilder_ == null) {
+          obj_ = protoclj.Sample1.EmbeddedObject.AnonymousObject.getDefaultInstance();
+          onChanged();
+        } else {
+          objBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+      /**
+       * <code>required .protoclj_sample.EmbeddedObject.AnonymousObject obj = 1;</code>
+       */
+      public protoclj.Sample1.EmbeddedObject.AnonymousObject.Builder getObjBuilder() {
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return getObjFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>required .protoclj_sample.EmbeddedObject.AnonymousObject obj = 1;</code>
+       */
+      public protoclj.Sample1.EmbeddedObject.AnonymousObjectOrBuilder getObjOrBuilder() {
+        if (objBuilder_ != null) {
+          return objBuilder_.getMessageOrBuilder();
+        } else {
+          return obj_;
+        }
+      }
+      /**
+       * <code>required .protoclj_sample.EmbeddedObject.AnonymousObject obj = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          protoclj.Sample1.EmbeddedObject.AnonymousObject, protoclj.Sample1.EmbeddedObject.AnonymousObject.Builder, protoclj.Sample1.EmbeddedObject.AnonymousObjectOrBuilder> 
+          getObjFieldBuilder() {
+        if (objBuilder_ == null) {
+          objBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              protoclj.Sample1.EmbeddedObject.AnonymousObject, protoclj.Sample1.EmbeddedObject.AnonymousObject.Builder, protoclj.Sample1.EmbeddedObject.AnonymousObjectOrBuilder>(
+                  obj_,
+                  getParentForChildren(),
+                  isClean());
+          obj_ = null;
+        }
+        return objBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:protoclj_sample.EmbeddedObject)
+    }
+
+    static {
+      defaultInstance = new EmbeddedObject(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:protoclj_sample.EmbeddedObject)
+  }
+
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_protoclj_sample_KeyValuePair_descriptor;
   private static
@@ -2700,6 +3702,16 @@ public final class Sample1 {
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_protoclj_sample_OptionalObject_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_protoclj_sample_EmbeddedObject_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_protoclj_sample_EmbeddedObject_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_protoclj_sample_EmbeddedObject_AnonymousObject_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_protoclj_sample_EmbeddedObject_AnonymousObject_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -2716,7 +3728,10 @@ public final class Sample1 {
       ".KeyValuePair\"O\n\016RepeatedObject\022\020\n\010messa" +
       "ges\030\001 \003(\t\022+\n\004kvps\030\002 \003(\0132\035.protoclj_sampl" +
       "e.KeyValuePair\"\036\n\016OptionalObject\022\014\n\004text" +
-      "\030\001 \001(\tB\n\n\010protoclj"
+      "\030\001 \001(\t\"o\n\016EmbeddedObject\022<\n\003obj\030\001 \002(\0132/." +
+      "protoclj_sample.EmbeddedObject.Anonymous" +
+      "Object\032\037\n\017AnonymousObject\022\014\n\004text\030\001 \002(\tB",
+      "\n\n\010protoclj"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -2746,6 +3761,18 @@ public final class Sample1 {
           internal_static_protoclj_sample_OptionalObject_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_protoclj_sample_OptionalObject_descriptor,
+              new java.lang.String[] { "Text", });
+          internal_static_protoclj_sample_EmbeddedObject_descriptor =
+            getDescriptor().getMessageTypes().get(4);
+          internal_static_protoclj_sample_EmbeddedObject_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_protoclj_sample_EmbeddedObject_descriptor,
+              new java.lang.String[] { "Obj", });
+          internal_static_protoclj_sample_EmbeddedObject_AnonymousObject_descriptor =
+            internal_static_protoclj_sample_EmbeddedObject_descriptor.getNestedTypes().get(0);
+          internal_static_protoclj_sample_EmbeddedObject_AnonymousObject_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_protoclj_sample_EmbeddedObject_AnonymousObject_descriptor,
               new java.lang.String[] { "Text", });
           return null;
         }

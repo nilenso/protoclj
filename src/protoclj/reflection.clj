@@ -1,5 +1,5 @@
 (ns protoclj.reflection
-  (:import [com.google.protobuf GeneratedMessage$Builder ByteString]
+  (:import [com.google.protobuf GeneratedMessage GeneratedMessage$Builder ByteString]
            [java.lang Iterable]))
 
 (defn- keywordize-fn
@@ -50,7 +50,7 @@
      :type type
      :attribute-type :repeated}))
 
-(defn  proto-attributes
+(defn proto-attributes
   "Get a list of interesting attributes for the class.
   Currently done by seeing all setters.
   If it accepts 2 args, it's a repeated attr."
@@ -71,3 +71,34 @@
       (if (= 1 (count param-types))
         (regular-attribute kw read-interface builder-clazz function type)
         (repeated-attribute kw read-interface builder-clazz (.getName function) type)))))
+
+(defn- iterate-inner-classes [^Class root]
+  (lazy-cat (cons root (mapcat iterate-inner-classes (.getDeclaredClasses root)))))
+
+(defn- anonymous-protocol [class-name]
+  (-> class-name
+      name
+      (clojure.string/replace #"[^a-zA-Z1-9]" "-")
+      gensym))
+
+(defn- anonymous-symbol [class-name]
+  (-> class-name
+      name
+      (clojure.string/replace #"[^a-zA-Z1-9]" "-")
+      clojure.string/lower-case
+      gensym))
+
+(defn protobuf-classes
+  "Get a map of classes to the function and protocol that represent it"
+  [root-clazz named-bindings-seq]
+  (let [named-bindings (reduce (fn [m [fn clazz]]
+                                 (assoc m (symbol (.getName ^Class (eval clazz))) fn))
+                               {} named-bindings-seq)
+        classes (->> root-clazz
+                     eval
+                     iterate-inner-classes
+                     (filter #(= GeneratedMessage (.getSuperclass ^Class %)))
+                     (map #(symbol (.getName ^Class %))))]
+    (reduce #(assoc %1 %2
+                    {:fn-name (get named-bindings %2 (anonymous-symbol %2))
+                     :protocol-name (anonymous-protocol %2)}) {} classes)))

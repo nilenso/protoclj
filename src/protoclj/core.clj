@@ -49,41 +49,40 @@
 
 (defn- build-proto-definition
   "Returns a sexp for defining the proto"
-  [[clazz fn-name] bindings-map]
+  [clazz fn-name protocol-name bindings-map]
   (let [this (vary-meta (gensym "this") assoc :tag clazz)
         attributes (reflection/proto-attributes clazz)
-        protocol-name (-> ^Class (eval clazz) .getName (clojure.string/replace #"[^a-zA-Z1-9]" "-") gensym)
         byte-array-type (-> 0 byte-array class .getName symbol)
         byte-array-symbol (vary-meta (gensym "stream") assoc :tag byte-array-type)
         map-sym (gensym "map")]
-    `(do
-       (defprotocol ~protocol-name
-         (~fn-name [~this]))
-       (extend-protocol ~protocol-name
-         nil
-         (~fn-name [_#] nil)
+    `(extend-protocol ~protocol-name
+       nil
+       (~fn-name [_#] nil)
 
-         ~byte-array-type
-         (~fn-name [~byte-array-symbol] (~fn-name (. ~clazz ~'parseFrom ~byte-array-symbol)))
+       ~byte-array-type
+       (~fn-name [~byte-array-symbol] (~fn-name (. ~clazz ~'parseFrom ~byte-array-symbol)))
 
-         java.io.InputStream
-         (~fn-name [input-stream#] (~fn-name (. ~clazz ~'parseFrom input-stream#)))
+       java.io.InputStream
+       (~fn-name [input-stream#] (~fn-name (. ~clazz ~'parseFrom input-stream#)))
 
-         ~clazz
-         (~fn-name [~this] ~(build-reader this attributes bindings-map))
+       ~clazz
+       (~fn-name [~this] ~(build-reader this attributes bindings-map))
 
-         clojure.lang.IPersistentMap
-         (~fn-name [~map-sym] (~fn-name ~(sexp/build-from-map map-sym clazz attributes bindings-map)))))))
+       clojure.lang.IPersistentMap
+       (~fn-name [~map-sym] (~fn-name ~(sexp/build-from-map map-sym clazz attributes bindings-map))))))
 
 (defmacro defprotos
   "Public macro. See tests for usage"
-  [bindings-name & bindings-seq]
-  (let [bindings (->> bindings-seq
-                      (partition-all 2)
-                      (map reverse)
-                      (map vec))
-        bindings-map (reduce (fn [m [clazz fn]] (assoc m (eval clazz) fn)) {} bindings)]
+  [bindings-name root-clazz & bindings-seq]
+  (let [named-bindings (->> bindings-seq
+                            (partition-all 2))
+        protobuf-classes (reflection/protobuf-classes root-clazz named-bindings)
+        bindings-map (reduce (fn [m [clazz {:keys [fn-name]}]]
+                               (assoc m (eval clazz) fn-name)) {} protobuf-classes)]
     `(do
-       ~@(for [binding bindings]
-           (build-proto-definition binding bindings-map))
+       ~@(for [[clazz {:keys [fn-name protocol-name]}] protobuf-classes]
+           `(defprotocol ~protocol-name
+              (~fn-name [arg#])))
+       ~@(for [[clazz {:keys [fn-name protocol-name]}] protobuf-classes]
+           (build-proto-definition clazz fn-name protocol-name bindings-map))
        (def ~bindings-name {:protobuf-mappers ~bindings-map}))))
