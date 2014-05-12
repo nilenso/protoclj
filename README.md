@@ -16,6 +16,7 @@ _____
 
 ```clojure
 ; Declare the functions key-value-pair and nested-object
+; Sample1 is the root of the proto definition.
 (defprotos sample1 Sample1
   key-value-pair  Sample1$KeyValuePair
   nested-object   Sample1$NestedObject)
