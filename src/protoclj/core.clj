@@ -16,6 +16,9 @@
 (defprotocol ProtobufEnum
   (proto-val [m]))
 
+(defprotocol ToPrimitive
+  (to-primitive [m]))
+
 (extend-type nil
   ProtobufElement
   (proto-obj [m] nil)
@@ -28,7 +31,15 @@
   (proto-to-byte-array [m] nil)
 
   ProtobufEnum
-  (proto-val [m] nil))
+  (proto-val [m] nil)
+
+  ToPrimitive
+  (to-primitive [m] nil))
+
+;; This protocol can be extended for custom types,
+;; ex, to cast UUIDs to strings
+(extend-protocol ToPrimitive Object
+  (to-primitive [m] m))
 
 (defn- build-reader
   "The main reify that can get different params"

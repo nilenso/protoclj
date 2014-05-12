@@ -22,6 +22,10 @@
   embedded-object Sample1$EmbeddedObject
   enum-object     Sample1$EnumObject)
 
+(extend-protocol ToPrimitive
+  java.util.UUID
+  (to-primitive [m] (str m)))
+
 (deftest very-simple-protobufs
   (testing "can be read from"
     (let [proto-object (-> (Sample1$KeyValuePair/newBuilder)
@@ -39,7 +43,11 @@
   (testing "can be parsed from a map"
     (let [kvp (key-value-pair {:key "foo" :value "bar"})]
       (is (= "foo" (proto-get kvp :key)))
-      (is (= "bar" (proto-get kvp :value))))))
+      (is (= "bar" (proto-get kvp :value))))
+
+    (let [kvp (key-value-pair {:key "foo" :value (java.util.UUID/fromString "57656605-d1ae-4c05-b5e4-6f677ec4ebfc")})]
+      (is (= "foo" (proto-get kvp :key)))
+      (is (= "57656605-d1ae-4c05-b5e4-6f677ec4ebfc" (proto-get kvp :value))))))
 
 (deftest a-protobuf-containing-another
   (testing "can be read from"

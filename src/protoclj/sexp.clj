@@ -35,7 +35,7 @@
 (defmulti build-attribute-from-map #(:attribute-type %4))
 
 (defmethod build-attribute-from-map :regular [map builder bindings-map {:keys [type writer name-kw] :as attribute}]
-  (let [sexp `(~name-kw ~map)
+  (let [sexp `(protoclj.core/to-primitive (~name-kw ~map))
         sexp (if-let [mapper (get bindings-map type)]
                `(protoclj.core/proto-obj (~mapper ~sexp))
                sexp)
