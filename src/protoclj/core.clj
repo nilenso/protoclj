@@ -10,7 +10,8 @@
 (defprotocol ProtobufMessage
   (proto-get [m k])
   (proto-get-raw [m k])
-  (proto-keys [m]))
+  (proto-keys [m])
+  (proto-to-byte-array [m]))
 
 (defprotocol ProtobufEnum
   (proto-val [m]))
@@ -24,6 +25,7 @@
   (proto-get [m k] nil)
   (proto-get-raw [m k] nil)
   (proto-keys [m] nil)
+  (proto-to-byte-array [m] nil)
 
   ProtobufEnum
   (proto-val [m] nil))
@@ -42,6 +44,7 @@
          ~@(mapcat #(list (:name-kw %) (sexp/fetch-as-object this nil %)) attributes)
          nil))
      (proto-keys [_#] ~(vec (map :name-kw attributes)))
+     (proto-to-byte-array [_#] (.toByteArray ~this))
 
      ProtobufElement
      (proto-obj [_#] ~this)
@@ -51,7 +54,7 @@
 
      clojure.java.io.IOFactory
      (make-input-stream [x# opts#]
-       (clojure.java.io/make-input-stream (.toByteArray ~this) opts#))
+       (clojure.java.io/make-input-stream (proto-to-byte-array x#) opts#))
      (make-output-stream [x# opts#]
        (throw (IllegalArgumentException. (str "Cannot create an output stream from protobuf"))))
      (make-reader [x# opts#]
